@@ -25,6 +25,9 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
       print('onCapture----$data');
       setState(() {
         _captureText = data;
+        print('I just captured----$data');
+        //call approval API here
+
       });
     });
 
@@ -88,7 +91,7 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
               child: _buildToolBar(),
             ),
             Container(
-              child: Text('The text scanned is $_captureText'),
+              child: Text('$_captureText'),
             )
           ],
         ),

@@ -23,6 +23,7 @@ import '../widgets/animated_numeric_text.dart';
 import '../widgets/bottom_sheet_add.dart';
 import '../widgets/fade_in.dart';
 import '../widgets/round_button.dart';
+import 'add_stock.dart';
 import 'dashboard.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -49,21 +50,21 @@ class _DashboardScreenState extends State<DashboardScreen>
   double i = 0;
 
   Future<bool> _goToLogi(BuildContext context) async {
-//    try {
-//      sign = true;
+    try {
+      sign = true;
 //      await _auth.logout();
 //      //  FirebaseUser user = result.user;
 //      //create a document for the user in users collections
 //      await DatabaseService(uid: widget.user.uid)
 //          .updateUserData(widget.user.email, false);
-//      return Navigator.of(context)
-//          .pushReplacementNamed('/')
-//          // we don't want to pop the screen, just replace it completely
-//          .then((_) => false);
-//    } catch (e) {
-//      print('Seems user is null: ' + e.toString());
-//      return null;
-//    }
+      return Navigator.of(context)
+          .pushReplacementNamed(LoginScreen.routeName)
+          // we don't want to pop the screen, just replace it completely
+          .then((_) => false);
+    } catch (e) {
+      print('Seems user is null: ' + e.toString());
+      return null;
+    }
   }
 
   final routeObserver = TransitionRouteObserver<PageRoute>();
@@ -128,7 +129,7 @@ else{
     super.initState();
     getPermission();
 
-    i = 0;
+    i = 43;
 
     _loadingController = AnimationController(
       vsync: this,
@@ -147,13 +148,13 @@ else{
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    i = 0;
+
     routeObserver.subscribe(this, ModalRoute.of(context));
   }
 
   @override
   void dispose() {
-    i = 0;
+
     routeObserver.unsubscribe(this);
     _loadingController.dispose();
     if (!sign) exiting();
@@ -258,7 +259,7 @@ else{
                 SizedBox(width: 5),
                 AnimatedNumericText(
                   initialValue: 0,
-                  targetValue: 12,
+                  targetValue: i,
                   //TODO: number of online drivers gotten from firebase
                   curve: Interval(0, 1, curve: Curves.easeOut),
                   controller: _loadingController,
@@ -338,7 +339,9 @@ else{
           label: 'Add Stock', //add stock
           interval: Interval(step * 2, aniInterval + step * 2),
           onPressed: () =>
-              {bottomSheetPickUpBy().settingModalBottomSheet(context)},
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => add_stock(),
+              )),
         ),
         _buildButton(
           icon: Icon(Icons.store),

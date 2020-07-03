@@ -110,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
       logoTag: Constants.logoTag,
       titleTag: Constants.titleTag,
        messages: LoginMessages(
-         usernameHint: 'Username',
+         usernameHint: 'Email',
          passwordHint: 'Password',
          confirmPasswordHint: 'Confirm Password',
          loginButton: 'LOG IN',
