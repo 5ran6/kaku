@@ -1,10 +1,11 @@
 import 'dart:io';
-
+import 'package:permissions_plugin/permissions_plugin.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/theme.dart';
 import 'package:flutter_login/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:kaku/screens/approval.dart';
 import 'package:kaku/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:kaku/models/user.dart';
@@ -71,9 +72,62 @@ class _DashboardScreenState extends State<DashboardScreen>
   Animation<double> _headerScaleAnimation;
   AnimationController _loadingController;
 
+  void getPermission() async {
+    Map<Permission, PermissionState> permission = await PermissionsPlugin
+        .requestPermissions([
+      Permission.ACCESS_FINE_LOCATION,
+      Permission.ACCESS_COARSE_LOCATION,
+      Permission.READ_PHONE_STATE
+    ]);
+
+    if( permission[Permission.CAMERA] != PermissionState.GRANTED) {
+      try {
+        permission = await PermissionsPlugin
+            .requestPermissions([
+          Permission.CAMERA,
+          Permission.READ_EXTERNAL_STORAGE,
+          Permission.WRITE_EXTERNAL_STORAGE
+        ]);
+      } on Exception {
+        debugPrint("Error");
+      }
+
+      if( permission[Permission.CAMERA] == PermissionState.GRANTED)
+        print("permissions granted");
+      else
+        permissionsDenied(context);
+
+    }
+else{
+      print("Permission ok");
+    }
+
+  }
+
+  void permissionsDenied(BuildContext context){
+    showDialog(context: context, builder: (BuildContext _context) {
+      return SimpleDialog(
+        title: const Text("Permission denied"),
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(left: 30, right: 30, top: 15, bottom: 15),
+            child: const Text(
+              "These permission are needed for this application to run well",
+              style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black54
+              ),
+            ),
+          )
+        ],
+      );
+    });
+  }
   @override
   void initState() {
     super.initState();
+    getPermission();
+
     i = 0;
 
     _loadingController = AnimationController(
@@ -273,7 +327,9 @@ class _DashboardScreenState extends State<DashboardScreen>
           ),
           label: 'Approval', //approve payment (using barcode)
           interval: Interval(step, aniInterval + step),
-          onPressed: () => bottomSheet().settingModalBottomSheet(context),
+          onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => approval(),
+          )),
         ),
         _buildButton(
           icon: Icon(
@@ -303,7 +359,7 @@ class _DashboardScreenState extends State<DashboardScreen>
           label: 'Reports', //sales history per day
           interval: Interval(step * 2, aniInterval + step * 2),
           onPressed: () => Navigator.of(context).push(FadePageRoute(
-            builder: (context) => history(),
+            builder: (context) => approval(),
           )),
         ),
         _buildButton(
@@ -355,13 +411,29 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  Widget history() {
-//    return StreamProvider<List<Orders>>.value(
-//      initialData: [],
-//      value: DatabaseService().all_orders,
-//      child: new HistoryList(widget.user),
-    //   );
-  }
+  Widget approval() {
+    return MaterialApp(
+      home: Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+            color: Colors.blue.shade400,
+            image: DecorationImage(
+              image: AssetImage("assets/scan.jpg"),
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.camera),
+          backgroundColor: Colors.orange,
+          onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => QRScan(),
+          )),
+        ),
+      ),
+    );
+
+     }
 
   Widget drivers() {
 //    return StreamProvider<List<Drivers>>.value(
@@ -414,11 +486,8 @@ class _DashboardScreenState extends State<DashboardScreen>
 
     // show the dialog
     showDialog(
-
       context: context,
-
       builder: (BuildContext context) {
-
         return alert;
       },
     );

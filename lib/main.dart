@@ -23,21 +23,24 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool isFirst = true;
+  bool isFirst = false;
 
   @override
   void initState() {
-    getFirst();
-  }
+    SharedPreferences.getInstance().then((prefs){
+      var isShowed =prefs.getBool("isIntroShowed");
+      if(isShowed!=null && isShowed)
+      {
+        //navigate to main page
+     isFirst = false;
+      }
+      else{
+        //navigate to intro page
+        isFirst = true;
+      }
+    });
 
-  void getFirst() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    if (await prefs.getBool("isFirst") == null) {
-      isFirst = true;
-    }else{
-      isFirst = await prefs.getBool("isFirst");
-    }
+    super.initState();
   }
 
   @override
@@ -93,7 +96,7 @@ class _MyAppState extends State<MyApp> {
 
   void doneFirstTime() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool("isFirst", true);
+     await prefs.setBool("isIntroShowed", true);
   }
 
 

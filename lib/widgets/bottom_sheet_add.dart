@@ -16,9 +16,7 @@ class bottomSheetAdd {
               child: Wrap(
                 children: <Widget>[
                   Padding(
-                    padding: MediaQuery
-                        .of(context)
-                        .viewInsets,
+                    padding: MediaQuery.of(context).viewInsets,
                     child: Column(
                       children: <Widget>[
                         TextField(
@@ -29,7 +27,7 @@ class bottomSheetAdd {
                           autofocus: true,
                           style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
-                              labelText: "Driver's Email",
+                              labelText: "Employee's Email",
                               labelStyle: TextStyle(color: Colors.black54),
                               border: OutlineInputBorder()),
                         ),
@@ -38,7 +36,7 @@ class bottomSheetAdd {
                         ),
                         TextField(
                           controller: _name,
-                          keyboardType: TextInputType.text,
+                          keyboardType: TextInputType.visiblePassword,
                           textCapitalization: TextCapitalization.words,
                           focusNode: FocusNode(),
                           textInputAction: TextInputAction.done,
@@ -48,7 +46,7 @@ class bottomSheetAdd {
                           autofocus: true,
                           style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
-                              labelText: "Driver's Name",
+                              labelText: "Employee's Password (min 6)",
                               labelStyle: TextStyle(color: Colors.black54),
                               border: OutlineInputBorder()),
                         ),
@@ -90,14 +88,14 @@ class bottomSheetAdd {
       Toast.show("Enter email address", context,
           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
 
-      // return "Enter email address";
+  //     return "Enter email address";
     }
-    if (name.isEmpty) {
+    if (name.isEmpty || name.length < 6) {
       // The form is empty
-      Toast.show("Enter the driver's name", context,
+      Toast.show("Enter a password of at least 6 characters", context,
           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
 
-      // return "Enter email address";
+//       return "Enter a password of at least 6 characters";
     }
     // This is just a regular expression for email addresses
     String p = "[a-zA-Z0-9\+\.\_\%\-\+]{1,256}" +
@@ -109,32 +107,11 @@ class bottomSheetAdd {
         ")+";
     RegExp regExp = new RegExp(p);
 
-    if (regExp.hasMatch(text)) {
+    if (regExp.hasMatch(text) && name.isNotEmpty) {
       // So, the email is valid
       Toast.show("Adding.....", context,
           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
 //when done, close bottomSheet
-
-      //check if email exists for this store
-//      final snapShot = await Firestore.instance
-//          .collection('users')
-//          .document(text)
-//          .get();
-
-//      if (snapShot.exists) {
-//        // Document with id == docId doesn't exist.
-//        //if found
-//////        dynamic result = await DatabaseService(uid: '')
-//////            .updateDriverData(name, text.trim(), true);
-////
-////        print('ADDED Status: ' + result.toString());
-////        checked = true;
-////        if (result.toString() == 'null') {
-////          done = true;
-////        }
-//      } else {
-//        checked = true;
-//      }
 
       if (done) {
         Toast.show("ADDED SUCCESSFULLY", context,
@@ -145,14 +122,13 @@ class bottomSheetAdd {
           Toast.show("Network issues! Try again", context,
               duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
           checked = false;
-        }else{
-          Toast.show("This driver is not registered yet", context,
+        } else {
+          Toast.show("This employee has been registered already", context,
               duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-
         }
       }
     } else {
-      Toast.show("Enter a valid address", context,
+      Toast.show("Enter a valid credentials", context,
           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
     }
   }

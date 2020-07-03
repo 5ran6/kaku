@@ -37,6 +37,8 @@ dependencies:
   clipboard_manager: ^0.0.4
   fancy_on_boarding: ^1.6.0
   shared_preferences: ^0.5.7+3
+  qrcode: ^1.0.4
+  permissions_plugin: ^1.1.4
 
 
 dev_dependencies:
