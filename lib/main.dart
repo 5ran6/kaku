@@ -1,8 +1,6 @@
 import 'package:fancy_on_boarding/fancy_on_boarding.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:kaku/screens/onboarding.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/login_screen.dart';
@@ -87,8 +85,7 @@ class _MyAppState extends State<MyApp> {
           isFirst ? onboarding(context) : LoginScreen()),
       navigatorObservers: [TransitionRouteObserver()],
       routes: {
-        Onboarding.routeName: (context) => Onboarding(),
-        LoginScreen.routeName: (context) => LoginScreen(),
+         LoginScreen.routeName: (context) => LoginScreen(),
         DashboardScreen.routeName: (context) => DashboardScreen(),
       },
     );

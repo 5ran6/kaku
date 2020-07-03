@@ -11,8 +11,10 @@ import 'package:kaku/models/user.dart';
 import 'package:kaku/models/users.dart';
 import 'package:kaku/widgets/bottom_sheet.dart';
 import 'package:kaku/widgets/bottom_sheet_pickUp_by.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:giffy_dialog/giffy_dialog.dart';
 import '../constants.dart';
 import '../custom_route.dart';
 import '../transition_route_observer.dart';
@@ -256,7 +258,7 @@ class _DashboardScreenState extends State<DashboardScreen>
       children: [
         _buildButton(
           icon: Icon(Icons.person_add),
-          label: 'Add Item',
+          label: 'Employee', //add employee by asking for password first
           interval: Interval(0, aniInterval),
           onPressed: () => {bottomSheetAdd().settingModalBottomSheet(context)},
         ),
@@ -266,10 +268,10 @@ class _DashboardScreenState extends State<DashboardScreen>
             padding: const EdgeInsets.only(left: 16.0),
             alignment: Alignment.centerLeft,
             child: Icon(
-              Icons.list,
+              Icons.assignment_turned_in,
             ),
           ),
-          label: 'Category',
+          label: 'Approval', //approve payment (using barcode)
           interval: Interval(step, aniInterval + step),
           onPressed: () => bottomSheet().settingModalBottomSheet(context),
         ),
@@ -277,14 +279,14 @@ class _DashboardScreenState extends State<DashboardScreen>
           icon: Icon(
             Icons.playlist_add,
           ),
-          label: 'Add Stock',
+          label: 'Add Stock', //add stock
           interval: Interval(step * 2, aniInterval + step * 2),
           onPressed: () =>
               {bottomSheetPickUpBy().settingModalBottomSheet(context)},
         ),
         _buildButton(
           icon: Icon(Icons.store),
-          label: 'My Store',
+          label: "Vendor Corner", //
           interval: Interval(0, aniInterval),
           onPressed: () => Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => LoginScreen(),
@@ -292,13 +294,13 @@ class _DashboardScreenState extends State<DashboardScreen>
         ),
         _buildButton(
           icon: Icon(Icons.shopping_basket),
-          label: 'Make a Sale',
+          label: 'Make a Sale', //make a sale
           interval: Interval(step, aniInterval + step),
           onPressed: () => {},
         ),
         _buildButton(
           icon: Icon(FontAwesomeIcons.history),
-          label: 'History',
+          label: 'Reports', //sales history per day
           interval: Interval(step * 2, aniInterval + step * 2),
           onPressed: () => Navigator.of(context).push(FadePageRoute(
             builder: (context) => history(),
@@ -306,7 +308,7 @@ class _DashboardScreenState extends State<DashboardScreen>
         ),
         _buildButton(
           icon: Icon(Icons.receipt, size: 20),
-          label: 'Invoice',
+          label: 'Invoices', //to reprint invoices by transaction ID
           interval: Interval(0, aniInterval),
           onPressed: () => Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => drivers(),
@@ -314,13 +316,38 @@ class _DashboardScreenState extends State<DashboardScreen>
         ),
         _buildButton(
           icon: Icon(FontAwesomeIcons.info, size: 20),
-          label: 'About',
+          label: 'About', //about
           interval: Interval(step, aniInterval + step),
-          onPressed: () => {_launchURLabout()},
+          onPressed: () => {
+            showDialog(
+                context: context,
+                builder: (_) => AssetGiffyDialog(
+                      key: Key("Asset"),
+                      image: Image.asset(
+                        'assets/about.gif',
+                        fit: BoxFit.cover,
+                      ),
+                      title: Text(
+                        'About KAKU',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 16.0, fontWeight: FontWeight.w600),
+                      ),
+                      entryAnimation: EntryAnimation.BOTTOM_RIGHT,
+                      description: Text(
+                        'KAKU is a user friendly application for store vendors and their employees to automate sales, reporting and management!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(),
+                      ),
+                      onOkButtonPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ))
+          },
         ),
         _buildButton(
           icon: Icon(Icons.exit_to_app, size: 20),
-          label: 'Exit',
+          label: 'Exit', //exit
           interval: Interval(step * 2, aniInterval + step * 2),
           onPressed: () => {exiting()},
         ),
@@ -333,7 +360,7 @@ class _DashboardScreenState extends State<DashboardScreen>
 //      initialData: [],
 //      value: DatabaseService().all_orders,
 //      child: new HistoryList(widget.user),
- //   );
+    //   );
   }
 
   Widget drivers() {
@@ -347,18 +374,30 @@ class _DashboardScreenState extends State<DashboardScreen>
   void exiting() async {
     showAlertDialog(context);
   }
-  showAlertDialog(BuildContext context) {
 
+  void checkPassword(String password) async {
+    //start Rolling
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String gottenPassword = await prefs.get("password");
+    if (password == gottenPassword) {
+      //proceed
+
+    } else {
+      Toast.show("Password mismatch", context);
+    }
+  }
+
+  showAlertDialog(BuildContext context) {
     // set up the buttons
     Widget cancelButton = FlatButton(
       child: Text("Cancel"),
-      onPressed:  () {
+      onPressed: () {
         Navigator.pop(context);
       },
     );
     Widget continueButton = FlatButton(
       child: Text("Continue"),
-      onPressed:  () {
+      onPressed: () {
         exit(0);
       },
     );
@@ -375,8 +414,11 @@ class _DashboardScreenState extends State<DashboardScreen>
 
     // show the dialog
     showDialog(
+
       context: context,
+
       builder: (BuildContext context) {
+
         return alert;
       },
     );
@@ -436,7 +478,7 @@ class _DashboardScreenState extends State<DashboardScreen>
 
   @override
   Widget build(BuildContext context) {
-  //  final users = Provider.of<List<Users>>(context);
+    //  final users = Provider.of<List<Users>>(context);
     final theme = Theme.of(context);
 
     // i = i - 1;

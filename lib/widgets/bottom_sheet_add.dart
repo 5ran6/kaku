@@ -136,7 +136,6 @@ class bottomSheetAdd {
 //        checked = true;
 //      }
 
-
       if (done) {
         Toast.show("ADDED SUCCESSFULLY", context,
             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);

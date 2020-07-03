@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_login/flutter_login.dart';
 import 'package:kaku/screens/dashboard.dart';
 import 'package:kaku/screens/dashboard_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants.dart';
 import '../custom_route.dart';
@@ -69,6 +70,17 @@ class _LoginScreenState extends State<LoginScreen> {
 //      user = result;
 //      state = 1;
 //    }
+
+ //check login details using API
+
+ //send USER data{token, password, name, role} to sharedPref
+    String token, name, role;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.setString("password", data.password);
+//    prefs.setString("token", token);
+//    prefs.setString("role", role);
+//    prefs.setString("name", name);
   }
 
   Future<String> _recover(String email) async {
