@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:kaku/screens/invoice.dart';
 import 'package:permissions_plugin/permissions_plugin.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -345,10 +346,10 @@ else{
         ),
         _buildButton(
           icon: Icon(Icons.store),
-          label: "Vendor Corner", //
+          label: "Vendor", //
           interval: Interval(0, aniInterval),
           onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => LoginScreen(),
+            builder: (context) => Vendor(),
           )),
         ),
         _buildButton(
@@ -370,7 +371,7 @@ else{
           label: 'Invoices', //to reprint invoices by transaction ID
           interval: Interval(0, aniInterval),
           onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => drivers(),
+            builder: (context) => Vendor(),
           )),
         ),
         _buildButton(

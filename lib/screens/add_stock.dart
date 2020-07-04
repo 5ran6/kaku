@@ -7,8 +7,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:kaku/screens/dashboard_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:kaku/screens/dashboad_fab.dart';
+import 'package:kaku/screens/folding_cells.dart';
 
 class add_stock extends StatefulWidget {
 //TODO: Password needs to have at least 6 characters
@@ -81,7 +82,7 @@ class _add_stockState extends State<add_stock> {
       setState(() {
         _isLoading = false;
         Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (BuildContext context) => FancyFab()),
+            MaterialPageRoute(builder: (BuildContext context) => DashboardScreen()),
                 (Route<dynamic> route) => false);
       });
     } else {
@@ -200,7 +201,7 @@ class _add_stockState extends State<add_stock> {
                     "Add Stock\n_____",
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                        color: Colors.orange,
+                        color: Colors.deepOrangeAccent,
                         fontSize: 25,
                         fontWeight: FontWeight.bold),
                   ),
