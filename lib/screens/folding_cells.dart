@@ -32,7 +32,7 @@ class _FancyFabState extends State<FancyFab>
 
   @override
   initState() {
-    checkLoginStatus();
+   // checkLoginStatus();
     _animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500))
           ..addListener(() {
@@ -195,9 +195,10 @@ class _FancyFabState extends State<FancyFab>
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: CircleAvatar(
-                        backgroundImage: new ExactAssetImage('assets/logo.png'),
-                        backgroundColor: Colors.white70,
                         radius: 26.0,
+                        backgroundImage:
+                        NetworkImage("https://lh3.googleusercontent.com/proxy/dhcnA8JjS2SYP_SJvfag6uxDEJ5NZxx5nirByisAfJ2hafTM3FmzHaAooOUQWtNayZ6yrZCJhDRc4d_6EvNhk0BSK92SAiR0JQ"),
+                        backgroundColor: Colors.transparent,
                       ),
                     ),
                     VerticalDivider(
@@ -210,7 +211,7 @@ class _FancyFabState extends State<FancyFab>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          "Abraham Udele ",
+                          "Samsung Galaxy S10",
                           maxLines: 1,
                           style: TextStyle(
                               color: Colors.black,
@@ -218,7 +219,7 @@ class _FancyFabState extends State<FancyFab>
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          "FGC Vandekya, Benue ",
+                          "Invoice Number: 00$index",
                           maxLines: 1,
                           style: TextStyle(
                               color: Colors.black,
@@ -226,7 +227,7 @@ class _FancyFabState extends State<FancyFab>
                               fontWeight: FontWeight.w300),
                         ),
                         Text(
-                          "Male ",
+                          "3 Pieces ",
                           maxLines: 1,
                           style: TextStyle(
                               color: Colors.black,
@@ -277,7 +278,7 @@ class _FancyFabState extends State<FancyFab>
                     mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
                       Text(
-                        "Should be at: ",
+                        "Date: ",
                         maxLines: 1,
                         style: TextStyle(
                             color: Colors.black,
@@ -285,7 +286,7 @@ class _FancyFabState extends State<FancyFab>
                             fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        "Chapel ",
+                        "$index/12/2020 ",
                         maxLines: 1,
                         style: TextStyle(
                             color: Colors.black87,
@@ -308,7 +309,7 @@ class _FancyFabState extends State<FancyFab>
                     mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
                       Text(
-                        "Last checked in at: ",
+                        "Total Price:",
                         maxLines: 1,
                         style: TextStyle(
                             color: Colors.black,
@@ -316,7 +317,7 @@ class _FancyFabState extends State<FancyFab>
                             fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        "Chapel ",
+                        "N207,090.00 ",
                         maxLines: 1,
                         style: TextStyle(
                             color: Colors.black87,
@@ -339,7 +340,7 @@ class _FancyFabState extends State<FancyFab>
                     mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
                       Text(
-                        "Total attendance: ",
+                        "Sold by:",
                         maxLines: 1,
                         style: TextStyle(
                             color: Colors.black,
@@ -347,7 +348,7 @@ class _FancyFabState extends State<FancyFab>
                             fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        "$index",
+                        "Abraham Udele",
                         maxLines: 1,
                         style: TextStyle(
                             color: Colors.black87,
@@ -375,7 +376,7 @@ class _FancyFabState extends State<FancyFab>
               child: FlatButton(
                 onPressed: () {},
                 child: Text(
-                  "Track Attendance",
+                  "Generate Printout",
                 ),
                 textColor: Colors.white,
                 color: Colors.indigoAccent,
@@ -411,20 +412,20 @@ class _FancyFabState extends State<FancyFab>
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarColor: Colors.blue[800]));
+//    SystemChrome.setSystemUIOverlayStyle(
+//        SystemUiOverlayStyle(statusBarColor: Colors.blue[800]));
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        backgroundColor: Colors.lightBlue[300],
+        backgroundColor: Colors.deepOrange,
         elevation: 0,
-        title: Text("Parents Dashboard"),
+        title: Text("Choose a date range"),
         actions: <Widget>[
           // Using Stack to show Notification Badge
           new Stack(
             children: <Widget>[
               new IconButton(
-                  icon: Icon(Icons.message),
+                  icon: Icon(Icons.date_range),
                   onPressed: () {
                     setState(() {
                       notificationCounter = 0;
@@ -465,14 +466,14 @@ class _FancyFabState extends State<FancyFab>
             Container(
               // width: double.infinity,
               height: 150,
-              color: Colors.lightBlue[300],
+              color: Colors.deepOrange,
               alignment: Alignment.topCenter,
               child: Padding(
                 padding: const EdgeInsets.all(28.0),
                 child: Align(
                   alignment: Alignment.topCenter,
                   child: Image(
-                    image: AssetImage('assets/logo_round.png'),
+                    image: AssetImage('assets/images/ecorp.png'),
                     width: 100,
                     height: 100,
                     color: Colors.white,
@@ -483,7 +484,7 @@ class _FancyFabState extends State<FancyFab>
             Expanded(
               child: Container(
                 //height: MediaQuery.of(context).size.height - 150.0,
-                color: Colors.lightBlue[300],
+                color: Colors.deepOrange,
                 child: ListView.builder(
                     itemCount: 100,
                     itemBuilder: (context, index) {
@@ -513,7 +514,7 @@ class _FancyFabState extends State<FancyFab>
               _translateButton.value * 3.0,
               0.0,
             ),
-            child: add(),
+           // child: add(),
           ),
           Transform(
             transform: Matrix4.translationValues(
@@ -521,7 +522,7 @@ class _FancyFabState extends State<FancyFab>
               _translateButton.value * 2.0,
               0.0,
             ),
-            child: inbox(),
+          //  child: inbox(),
           ),
           Transform(
             transform: Matrix4.translationValues(
@@ -529,7 +530,7 @@ class _FancyFabState extends State<FancyFab>
               _translateButton.value,
               0.0,
             ),
-            child: settings(),
+          //  child: settings(),
           ),
           toggle(),
         ],

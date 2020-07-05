@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:kaku/screens/invoice.dart';
+import 'package:kaku/screens/folding_cells.dart';
+import 'package:kaku/screens/vendor.dart';
 import 'package:permissions_plugin/permissions_plugin.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -371,7 +372,7 @@ else{
           label: 'Invoices', //to reprint invoices by transaction ID
           interval: Interval(0, aniInterval),
           onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => Vendor(),
+            builder: (context) => FancyFab(),
           )),
         ),
         _buildButton(
@@ -495,15 +496,6 @@ else{
         return alert;
       },
     );
-  }
-
-  _launchURLabout() async {
-    const url = 'https://shopdeliverknysna.myshopify.com/pages/about';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
   }
 
   Widget _buildDebugButtons() {

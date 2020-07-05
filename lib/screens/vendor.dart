@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Vendor extends StatelessWidget {
   @override
@@ -9,19 +10,21 @@ class Vendor extends StatelessWidget {
       home: Scaffold(
         body: SafeArea(
           child: ListView(
+
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.all(14.0),
+                padding: const EdgeInsets.all(4.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: CircleAvatar(
-                        backgroundImage: new ExactAssetImage('assets/images/ecorp.png'),
-                        backgroundColor: Colors.white70,
-                        radius: 50.0,
+                        radius: 30.0,
+                        backgroundImage:
+                        NetworkImage("https://lh3.googleusercontent.com/proxy/dhcnA8JjS2SYP_SJvfag6uxDEJ5NZxx5nirByisAfJ2hafTM3FmzHaAooOUQWtNayZ6yrZCJhDRc4d_6EvNhk0BSK92SAiR0JQ"),
+                        backgroundColor: Colors.transparent,
                       ),
                     ),
                     VerticalDivider(
@@ -31,8 +34,8 @@ class Vendor extends StatelessWidget {
                       endIndent: 20,
                     ),
                     Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
                           "Abraham Udele ",
@@ -43,15 +46,15 @@ class Vendor extends StatelessWidget {
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          "FGC Vandekya, Benue ",
-                          maxLines: 1,
+                          "Address of Store or Something related ",
+                          maxLines: 2,
                           style: TextStyle(
                               color: Colors.black,
-                              fontSize: 15,
+                              fontSize: 10,
                               fontWeight: FontWeight.w300),
                         ),
                         Text(
-                          "Male ",
+                          "Others ",
                           maxLines: 1,
                           style: TextStyle(
                               color: Colors.black,
@@ -64,12 +67,12 @@ class Vendor extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(14.0),
+                padding: const EdgeInsets.fromLTRB(10.0,0,10,5),
                 child: Text(
                   "Welcome to Vendor's corner where the administration of the store happens",
                   style: TextStyle(
                       color: Colors.grey,
-                      fontSize: 15,
+                      fontSize: 11,
                       fontWeight: FontWeight.bold),
                 ),
               ),
@@ -77,17 +80,20 @@ class Vendor extends StatelessWidget {
                 thickness: 3,
                 height: 20,
                 color: Colors.blue,
-                indent: 20,
-                endIndent: 20,
+                indent: 10,
+                endIndent: 10,
               ),
+
+
+
               Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.all(10.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Container(
-                      width: 180,
-                      height: 180,
+                      width: MediaQuery. of(context). size. width/2 - 10,
+                      height: MediaQuery. of(context). size. width/2 - 10,
                       child: Card(
                         semanticContainer: true,
                         clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -105,15 +111,15 @@ class Vendor extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 Icon(
-                                  Icons.person_add,
+                                  Icons.list,
                                   size: 30,
                                   color: Colors.green,
                                 ),
                                 Text(
-                                  'Add a Child',
+                                  'Product List',
                                   style: TextStyle(
                                       color: Colors.black54,
-                                      fontSize: 18,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.bold),
                                 ),
                               ],
@@ -121,9 +127,10 @@ class Vendor extends StatelessWidget {
                           ),
                         ),
                       ),
-                    ), Container(
-                      width: 180,
-                      height: 180,
+                    ),
+                    Container(
+                      width: MediaQuery. of(context). size. width/2 - 10,
+                      height: MediaQuery. of(context). size. width/2 - 10,
                       child: Card(
                         semanticContainer: true,
                         clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -141,15 +148,15 @@ class Vendor extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 Icon(
-                                  Icons.person_outline,
+                                  Icons.attach_money,
                                   size: 30,
                                   color: Colors.red[300],
                                 ),
                                 Text(
-                                  'Remove a Child',
+                                  'Cost Price',
                                   style: TextStyle(
                                       color: Colors.black54,
-                                      fontSize: 18,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.bold),
                                 ),
                               ],
@@ -162,13 +169,13 @@ class Vendor extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.all(10.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Container(
-                      width: 180,
-                      height: 180,
+                      width: MediaQuery. of(context). size. width/2 - 10,
+                      height: MediaQuery. of(context). size. width/2 - 10,
                       child: Card(
                         semanticContainer: true,
                         clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -186,15 +193,15 @@ class Vendor extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 Icon(
-                                  Icons.info_outline,
+                                  Icons.monetization_on,
                                   size: 30,
-                                  color: Colors.black,
+                                  color: Colors.green,
                                 ),
                                 Text(
-                                  'About us',
+                                  'Selling Price',
                                   style: TextStyle(
                                       color: Colors.black54,
-                                      fontSize: 18,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.bold),
                                 ),
                               ],
@@ -202,10 +209,10 @@ class Vendor extends StatelessWidget {
                           ),
                         ),
                       ),
-
-                    ), Container(
-                      width: 180,
-                      height: 180,
+                    ),
+                    Container(
+                      width: MediaQuery. of(context). size. width/2 - 10,
+                      height: MediaQuery. of(context). size. width/2 - 10,
                       child: Card(
                         semanticContainer: true,
                         clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -223,15 +230,16 @@ class Vendor extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 Icon(
-                                  Icons.contact_mail,
-                                  size: 30,
-                                  color: Colors.yellow,
+                                  FontAwesomeIcons.percent,
+                                  size: 20,
+                                  color: Colors.red[300],
                                 ),
                                 Text(
-                                  'Contact us',
+                                  'Discounts',
                                   style: TextStyle(
                                       color: Colors.black54,
-                                      fontSize: 18,
+                                      fontSize: 14,
+
                                       fontWeight: FontWeight.bold),
                                 ),
                               ],
