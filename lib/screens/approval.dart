@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:qrcode/qrcode.dart';
 
 void main() => runApp(QRScan());
@@ -27,25 +28,24 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
         _captureText = data;
         print('I just captured----$data');
         //call approval API here
-
       });
     });
 
     _animationController =
         AnimationController(vsync: this, duration: Duration(seconds: 1));
     _animation =
-    AlignmentTween(begin: Alignment.topCenter, end: Alignment.bottomCenter)
-        .animate(_animationController)
-      ..addListener(() {
-        setState(() {});
-      })
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          _animationController.reverse();
-        } else if (status == AnimationStatus.dismissed) {
-          _animationController.forward();
-        }
-      });
+        AlignmentTween(begin: Alignment.topCenter, end: Alignment.bottomCenter)
+            .animate(_animationController)
+              ..addListener(() {
+                setState(() {});
+              })
+              ..addStatusListener((status) {
+                if (status == AnimationStatus.completed) {
+                  _animationController.reverse();
+                } else if (status == AnimationStatus.dismissed) {
+                  _animationController.forward();
+                }
+              });
     _animationController.forward();
   }
 
@@ -60,14 +60,15 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.deepOrange,
           title: const Text('Scan QRCode on Invoice'),
         ),
         body: Stack(
           alignment: Alignment.center,
           children: <Widget>[
             Container(
-              width: 250,
-              height: 250,
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
               color: Colors.black,
               child: QRCaptureView(
                 controller: _captureController,
@@ -105,12 +106,18 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         FlatButton(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14.0),
+              side: BorderSide(color: Colors.orange)),
           onPressed: () {
             _captureController.pause();
           },
           child: Text('Pause'),
         ),
         FlatButton(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14.0),
+              side: BorderSide(color: Colors.orange)),
           onPressed: () {
             if (_isTorchOn) {
               _captureController.torchMode = CaptureTorchMode.off;
@@ -122,6 +129,9 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
           child: Text('Torch'),
         ),
         FlatButton(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14.0),
+              side: BorderSide(color: Colors.orange)),
           onPressed: () {
             _captureController.resume();
           },

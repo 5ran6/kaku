@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:kaku/screens/dashboard_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:kaku/screens/folding_cells.dart';
+import 'package:kaku/screens/invoices.dart';
 
 class add_stock extends StatefulWidget {
 //TODO: Password needs to have at least 6 characters
@@ -182,6 +182,7 @@ class _add_stockState extends State<add_stock> {
 
     return MaterialApp(
       home: Scaffold(
+        backgroundColor: Colors.red[50],
         key: _scaffoldKey,
         body: SafeArea(
           child: _isLoading

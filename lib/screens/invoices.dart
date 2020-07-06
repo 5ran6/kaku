@@ -227,7 +227,7 @@ class _FancyFabState extends State<FancyFab>
                               fontWeight: FontWeight.w300),
                         ),
                         Text(
-                          "3 Pieces ",
+                          "Customer: Abraham Udele",
                           maxLines: 1,
                           style: TextStyle(
                               color: Colors.black,
@@ -412,8 +412,8 @@ class _FancyFabState extends State<FancyFab>
 
   @override
   Widget build(BuildContext context) {
-//    SystemChrome.setSystemUIOverlayStyle(
-//        SystemUiOverlayStyle(statusBarColor: Colors.blue[800]));
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(statusBarColor: Colors.deepOrange));
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -465,11 +465,11 @@ class _FancyFabState extends State<FancyFab>
           children: <Widget>[
             Container(
               // width: double.infinity,
-              height: 150,
+              height: 100,
               color: Colors.deepOrange,
               alignment: Alignment.topCenter,
               child: Padding(
-                padding: const EdgeInsets.all(28.0),
+                padding: const EdgeInsets.all(18.0),
                 child: Align(
                   alignment: Alignment.topCenter,
                   child: Image(

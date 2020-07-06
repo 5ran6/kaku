@@ -1,16 +1,26 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:kaku/screens/bottom_sheet_daily.dart';
+import 'package:kaku/screens/bottom_sheet_monthly.dart';
+import 'package:kaku/screens/bottom_sheet_weekly.dart';
 
-class Vendor extends StatelessWidget {
+class Reports extends StatelessWidget {
+  final bSheetDaily = bottomSheetDaily();
+  final bSheetMonthly = bottomSheetMonthly();
+  final bSheetWeekly = bottomSheetWeekly();
+
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: Colors.red[50],
+       backgroundColor: Colors.red[50],
         body: SafeArea(
+
           child: ListView(
+
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(4.0),
@@ -22,8 +32,8 @@ class Vendor extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: CircleAvatar(
                         radius: 30.0,
-                        backgroundImage: NetworkImage(
-                            "https://lh3.googleusercontent.com/proxy/dhcnA8JjS2SYP_SJvfag6uxDEJ5NZxx5nirByisAfJ2hafTM3FmzHaAooOUQWtNayZ6yrZCJhDRc4d_6EvNhk0BSK92SAiR0JQ"),
+                        backgroundImage:
+                        NetworkImage("https://lh3.googleusercontent.com/proxy/dhcnA8JjS2SYP_SJvfag6uxDEJ5NZxx5nirByisAfJ2hafTM3FmzHaAooOUQWtNayZ6yrZCJhDRc4d_6EvNhk0BSK92SAiR0JQ"),
                         backgroundColor: Colors.transparent,
                       ),
                     ),
@@ -67,9 +77,9 @@ class Vendor extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(10.0, 0, 10, 5),
+                padding: const EdgeInsets.fromLTRB(10.0,0,10,5),
                 child: Text(
-                  "Welcome to Vendor's corner where the administration of the store happens",
+                  "Welcome to the Reports section where the reports can be generated",
                   style: TextStyle(
                       color: Colors.grey,
                       fontSize: 11,
@@ -83,14 +93,15 @@ class Vendor extends StatelessWidget {
                 indent: 10,
                 endIndent: 10,
               ),
+
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Container(
-                      width: MediaQuery.of(context).size.width / 2 - 10,
-                      height: MediaQuery.of(context).size.width / 2 - 10,
+                      width: MediaQuery. of(context). size. width/2 - 10,
+                      height: MediaQuery. of(context). size. width/2 - 10,
                       child: Card(
                         semanticContainer: true,
                         clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -101,19 +112,21 @@ class Vendor extends StatelessWidget {
                         margin: EdgeInsets.all(10),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(10.0),
-                          onTap: () {},
+                          onTap: () {
+                            bSheetDaily.settingModalBottomSheet(context, "2020-07-06");
+                          },
                           child: Padding(
                             padding: const EdgeInsets.all(28.0),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 Icon(
-                                  Icons.list,
+                                  Icons.today,
                                   size: 30,
                                   color: Colors.green,
                                 ),
                                 Text(
-                                  'Product List',
+                                  'Daily',
                                   style: TextStyle(
                                       color: Colors.black54,
                                       fontSize: 14,
@@ -126,8 +139,8 @@ class Vendor extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      width: MediaQuery.of(context).size.width / 2 - 10,
-                      height: MediaQuery.of(context).size.width / 2 - 10,
+                      width: MediaQuery. of(context). size. width/2 - 10,
+                      height: MediaQuery. of(context). size. width/2 - 10,
                       child: Card(
                         semanticContainer: true,
                         clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -138,19 +151,21 @@ class Vendor extends StatelessWidget {
                         margin: EdgeInsets.all(10),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(10.0),
-                          onTap: () {},
+                          onTap: () {
+                            bSheetWeekly.settingModalBottomSheet(context);
+                          },
                           child: Padding(
                             padding: const EdgeInsets.all(28.0),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 Icon(
-                                  Icons.attach_money,
+                                  Icons.view_week,
                                   size: 30,
-                                  color: Colors.red[300],
+                                  color: Colors.brown[600],
                                 ),
                                 Text(
-                                  'Cost Price',
+                                  'Weekly',
                                   style: TextStyle(
                                       color: Colors.black54,
                                       fontSize: 14,
@@ -171,8 +186,8 @@ class Vendor extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Container(
-                      width: MediaQuery.of(context).size.width / 2 - 10,
-                      height: MediaQuery.of(context).size.width / 2 - 10,
+                      width: MediaQuery. of(context). size. width/2 - 10,
+                      height: MediaQuery. of(context). size. width/2 - 10,
                       child: Card(
                         semanticContainer: true,
                         clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -183,19 +198,21 @@ class Vendor extends StatelessWidget {
                         margin: EdgeInsets.all(10),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(10.0),
-                          onTap: () {},
+                          onTap: () {
+                            bSheetMonthly.settingModalBottomSheet(context);
+                          },
                           child: Padding(
                             padding: const EdgeInsets.all(28.0),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 Icon(
-                                  Icons.monetization_on,
+                                  Icons.calendar_view_day,
                                   size: 30,
-                                  color: Colors.green,
+                                  color: Colors.blueAccent,
                                 ),
                                 Text(
-                                  'Selling Price',
+                                  'Monthly',
                                   style: TextStyle(
                                       color: Colors.black54,
                                       fontSize: 14,
@@ -208,8 +225,8 @@ class Vendor extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      width: MediaQuery.of(context).size.width / 2 - 10,
-                      height: MediaQuery.of(context).size.width / 2 - 10,
+                      width: MediaQuery. of(context). size. width/2 - 10,
+                      height: MediaQuery. of(context). size. width/2 - 10,
                       child: Card(
                         semanticContainer: true,
                         clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -227,15 +244,16 @@ class Vendor extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 Icon(
-                                  FontAwesomeIcons.percent,
-                                  size: 20,
-                                  color: Colors.red[300],
+                                  Icons.assignment,
+                                  size: 25,
+                                  color: Colors.deepOrangeAccent[300],
                                 ),
                                 Text(
-                                  'Discounts',
+                                  'Inventory',
                                   style: TextStyle(
                                       color: Colors.black54,
                                       fontSize: 14,
+
                                       fontWeight: FontWeight.bold),
                                 ),
                               ],
@@ -245,6 +263,19 @@ class Vendor extends StatelessWidget {
                       ),
                     ),
                   ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Total cash at hand: N300,500.00"
+                , style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+                ),
+              ), Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Gross profit: N250,790.00"
+                , style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, color: Colors.green[900]),
                 ),
               ),
             ],

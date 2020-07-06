@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:kaku/screens/folding_cells.dart';
+import 'package:kaku/screens/invoices.dart';
+import 'package:kaku/screens/reports.dart';
 import 'package:kaku/screens/vendor.dart';
 import 'package:permissions_plugin/permissions_plugin.dart';
 import 'package:flutter/foundation.dart';
@@ -364,7 +365,7 @@ else{
           label: 'Reports', //sales history per day
           interval: Interval(step * 2, aniInterval + step * 2),
           onPressed: () => Navigator.of(context).push(FadePageRoute(
-            builder: (context) => approval(),
+            builder: (context) => Reports(),
           )),
         ),
         _buildButton(
@@ -440,13 +441,6 @@ else{
 
      }
 
-  Widget drivers() {
-//    return StreamProvider<List<Drivers>>.value(
-//      initialData: [],
-//      value: DatabaseService().manage_drivers,
-//      child: new DriversList(widget.user),
-//    );
-  }
 
   void exiting() async {
     showAlertDialog(context);

@@ -128,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
          accentColor: Colors.yellow,
          errorColor: Colors.deepOrange,
          pageColorLight: Colors.indigo.shade300,
-         pageColorDark: Colors.orange,
+         pageColorDark: Colors.deepOrange,
          titleStyle: TextStyle(
            color: Colors.greenAccent,
            fontFamily: 'Quicksand',
