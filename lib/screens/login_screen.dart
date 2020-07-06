@@ -82,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
         body: data);
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200 ) {
       jsonData = json.decode(response.body);
       print('success: ' + response.body);
       state = 1;
