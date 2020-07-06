@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:kaku/screens/invoices.dart';
 import 'package:kaku/screens/reports.dart';
 import 'package:kaku/screens/vendor.dart';
+import 'package:kaku/widgets/make_sale.dart';
 import 'package:permissions_plugin/permissions_plugin.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -358,7 +359,9 @@ else{
           icon: Icon(Icons.shopping_basket),
           label: 'Make a Sale', //make a sale
           interval: Interval(step, aniInterval + step),
-          onPressed: () => {},
+          onPressed: () => Navigator.of(context).push(FadePageRoute(
+            builder: (context) => Make_Sale(),
+          )),
         ),
         _buildButton(
           icon: Icon(FontAwesomeIcons.history),

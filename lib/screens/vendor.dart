@@ -23,7 +23,7 @@ class Vendor extends StatelessWidget {
                       child: CircleAvatar(
                         radius: 30.0,
                         backgroundImage: NetworkImage(
-                            "https://lh3.googleusercontent.com/proxy/dhcnA8JjS2SYP_SJvfag6uxDEJ5NZxx5nirByisAfJ2hafTM3FmzHaAooOUQWtNayZ6yrZCJhDRc4d_6EvNhk0BSK92SAiR0JQ"),
+                            "https://icon-library.com/images/store-icon-png/store-icon-png-20.jpg"),
                         backgroundColor: Colors.transparent,
                       ),
                     ),
