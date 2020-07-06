@@ -31,9 +31,8 @@ import 'add_stock.dart';
 import 'dashboard.dart';
 
 class DashboardScreen extends StatefulWidget {
-  User user;
 
-  DashboardScreen({this.user});
+  DashboardScreen();
 
   static const routeName = '/dashboard';
 
