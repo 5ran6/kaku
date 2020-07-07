@@ -1,8 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:kaku/screens/add_product_line.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Vendor extends StatelessWidget {
+  void _goto(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = await prefs.get("token");
+
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => add_product_line(
+        token: token,
+      ),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -108,12 +121,12 @@ class Vendor extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 Icon(
-                                  Icons.list,
+                                  Icons.add_shopping_cart,
                                   size: 30,
                                   color: Colors.green,
                                 ),
                                 Text(
-                                  'Product List',
+                                  'Add a product Line',
                                   style: TextStyle(
                                       color: Colors.black54,
                                       fontSize: 14,
@@ -138,7 +151,9 @@ class Vendor extends StatelessWidget {
                         margin: EdgeInsets.all(10),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(10.0),
-                          onTap: () {},
+                          onTap: () {
+                            _goto(context);
+                          },
                           child: Padding(
                             padding: const EdgeInsets.all(28.0),
                             child: Column(
@@ -150,7 +165,7 @@ class Vendor extends StatelessWidget {
                                   color: Colors.red[300],
                                 ),
                                 Text(
-                                  'Cost Price',
+                                  'Manage Products',
                                   style: TextStyle(
                                       color: Colors.black54,
                                       fontSize: 14,
@@ -190,12 +205,12 @@ class Vendor extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 Icon(
-                                  Icons.monetization_on,
+                                  Icons.person_outline,
                                   size: 30,
-                                  color: Colors.green,
+                                  color: Colors.black,
                                 ),
                                 Text(
-                                  'Selling Price',
+                                  'Manage Employee',
                                   style: TextStyle(
                                       color: Colors.black54,
                                       fontSize: 14,
@@ -227,12 +242,12 @@ class Vendor extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 Icon(
-                                  FontAwesomeIcons.percent,
-                                  size: 20,
-                                  color: Colors.red[300],
+                                  Icons.chat,
+                                  size: 30,
+                                  color: Colors.blue[300],
                                 ),
                                 Text(
-                                  'Discounts',
+                                  'Send a message',
                                   style: TextStyle(
                                       color: Colors.black54,
                                       fontSize: 14,

@@ -1,4 +1,4 @@
-class Orders {
+class Product {
   final String date;
   final String to;
   final String address;
@@ -6,6 +6,6 @@ class Orders {
   final String when;
   final int level;
 
-  Orders(
+  Product(
       {this.date, this.to, this.address, this.status, this.when, this.level});
 }
