@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'package:intl/intl.dart';
 import 'package:kaku/screens/invoices.dart';
 import 'package:kaku/screens/reports.dart';
 import 'package:kaku/screens/vendor.dart';
@@ -24,14 +26,14 @@ import '../constants.dart';
 import '../custom_route.dart';
 import '../transition_route_observer.dart';
 import '../widgets/animated_numeric_text.dart';
-import '../widgets/bottom_sheet_add.dart';
+import '../widgets/bottom_sheet_add_employees.dart';
 import '../widgets/fade_in.dart';
 import '../widgets/round_button.dart';
 import 'add_stock.dart';
 import 'dashboard.dart';
+import 'package:http/http.dart' as http;
 
 class DashboardScreen extends StatefulWidget {
-
   DashboardScreen();
 
   static const routeName = '/dashboard';
@@ -77,17 +79,16 @@ class _DashboardScreenState extends State<DashboardScreen>
   AnimationController _loadingController;
 
   void getPermission() async {
-    Map<Permission, PermissionState> permission = await PermissionsPlugin
-        .requestPermissions([
+    Map<Permission, PermissionState> permission =
+        await PermissionsPlugin.requestPermissions([
       Permission.ACCESS_FINE_LOCATION,
       Permission.ACCESS_COARSE_LOCATION,
       Permission.READ_PHONE_STATE
     ]);
 
-    if( permission[Permission.CAMERA] != PermissionState.GRANTED) {
+    if (permission[Permission.CAMERA] != PermissionState.GRANTED) {
       try {
-        permission = await PermissionsPlugin
-            .requestPermissions([
+        permission = await PermissionsPlugin.requestPermissions([
           Permission.CAMERA,
           Permission.READ_EXTERNAL_STORAGE,
           Permission.WRITE_EXTERNAL_STORAGE
@@ -96,43 +97,41 @@ class _DashboardScreenState extends State<DashboardScreen>
         debugPrint("Error");
       }
 
-      if( permission[Permission.CAMERA] == PermissionState.GRANTED)
+      if (permission[Permission.CAMERA] == PermissionState.GRANTED)
         print("permissions granted");
       else
         permissionsDenied(context);
-
-    }
-else{
+    } else {
       print("Permission ok");
     }
-
   }
 
-  void permissionsDenied(BuildContext context){
-    showDialog(context: context, builder: (BuildContext _context) {
-      return SimpleDialog(
-        title: const Text("Permission denied"),
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.only(left: 30, right: 30, top: 15, bottom: 15),
-            child: const Text(
-              "These permission are needed for this application to run well",
-              style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.black54
-              ),
-            ),
-          )
-        ],
-      );
-    });
+  void permissionsDenied(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext _context) {
+          return SimpleDialog(
+            title: const Text("Permission denied"),
+            children: <Widget>[
+              Container(
+                padding:
+                    EdgeInsets.only(left: 30, right: 30, top: 15, bottom: 15),
+                child: const Text(
+                  "These permission are needed for this application to run well",
+                  style: TextStyle(fontSize: 18, color: Colors.black54),
+                ),
+              )
+            ],
+          );
+        });
   }
+
   @override
   void initState() {
     super.initState();
     getPermission();
-
-    i = 43;
+    getCount();
+    //i = 43;
 
     _loadingController = AnimationController(
       vsync: this,
@@ -157,11 +156,62 @@ else{
 
   @override
   void dispose() {
-
     routeObserver.unsubscribe(this);
     _loadingController.dispose();
     if (!sign) exiting();
     super.dispose();
+  }
+
+  String getSystemTime() {
+    var now = new DateTime.now();
+    return new DateFormat("H:m:s").format(now);
+  }
+
+  String getDate() {
+    var now = new DateTime.now();
+    return new DateFormat('yyyy-MM-dd').format(now);
+  }
+
+  getSalesCount(String date, String token) async {
+    bool done = false, checked = false;
+    Map data = {'date': date.trim()};
+
+    var jsonData;
+    var response = await http
+        .post(Constants.domain + "perDaySalesReport", body: data, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+    print('Status Code = ' + response.statusCode.toString());
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      try {
+        jsonData = json.decode(response.body);
+        print('success: ' + response.body);
+        done = true;
+        //parse json
+        i = double.parse(jsonData['data']['payments_count'].toString());
+      } on FormatException catch (exception) {
+        print('Exception: ' + exception.toString());
+        print('Error' + response.body);
+        done = false;
+      }
+    } else {
+      try {
+        jsonData = json.decode(response.body);
+        print('failed: ' + response.body);
+      } on FormatException catch (exception) {
+        print('Exception: ' + exception.toString());
+        print('Error' + response.body);
+        done = false;
+      }
+    }
+  }
+
+  void getCount() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token');
+    getSalesCount(getDate(), token);
   }
 
   @override
@@ -341,10 +391,9 @@ else{
           ),
           label: 'Add Stock', //add stock
           interval: Interval(step * 2, aniInterval + step * 2),
-          onPressed: () =>
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => add_stock(),
-              )),
+          onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => add_stock(),
+          )),
         ),
         _buildButton(
           icon: Icon(Icons.store),
@@ -440,9 +489,7 @@ else{
         ),
       ),
     );
-
-     }
-
+  }
 
   void exiting() async {
     showAlertDialog(context);

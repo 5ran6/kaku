@@ -70,15 +70,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<String> _login(LoginData loginData) async {
     String email = loginData.name,
-        password = loginData.password,
-        token,
-        name,
-        role;
+        password = loginData.password;
 
     Map data = {'email': email, 'password': password};
 
     var jsonData;
-    var response = await http.post("https://bytesfield.com.ng/kaku/api/signin",
+    var response = await http.post(Constants.domain +"signin",
         body: data);
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -86,12 +83,11 @@ class _LoginScreenState extends State<LoginScreen> {
       jsonData = json.decode(response.body);
       print('success: ' + response.body);
       state = 1;
-      prefs.setString("token", jsonData['token']);
+      prefs.setString("token", jsonData['data']['token']);
       prefs.setString("password", loginData.password);
-      prefs.setString("name", loginData.name);
-      prefs.setString("token", token);
-      prefs.setString("role", role);
-      prefs.setString("name", name);
+      prefs.setString("email", loginData.name);
+      prefs.setString("name", jsonData['data']['name']);
+      prefs.setString("role", jsonData['data']['role']);
     } else {
       jsonData = json.decode(response.body);
       print('failed: ' + response.body);

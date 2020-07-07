@@ -1,6 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qrcode/qrcode.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'package:toast/toast.dart';
+
+import '../constants.dart';
 
 void main() => runApp(QRScan());
 
@@ -14,7 +21,7 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
   Animation<Alignment> _animation;
   AnimationController _animationController;
 
-  bool _isTorchOn = false;
+  bool _isTorchOn = false, captured = false;
 
   String _captureText = '';
 
@@ -24,8 +31,11 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
 
     _captureController.onCapture((data) {
       print('onCapture----$data');
+
       setState(() {
         _captureText = data;
+        captured = true;
+        addStock(_captureText.trim());
         print('I just captured----$data');
         //call approval API here
       });
@@ -55,6 +65,49 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  void addStock(String barcode) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token');
+
+    Map data = {'barcode': barcode};
+
+    var jsonData;
+    var response =
+        await http.post(Constants.domain + "barcode", body: data, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+    print('Status Code = ' + response.statusCode.toString());
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      try {
+        jsonData = json.decode(response.body);
+        print('success: ' + response.body);
+        //parse json
+        String stock = jsonData['data']['product_stocks'].toString();
+        Toast.show("Success! Remaining $stock items", context);
+      } on FormatException catch (exception) {
+        print('Exception: ' + exception.toString());
+        print('Error' + response.body);
+      }
+    } else {
+      try {
+        jsonData = json.decode(response.body);
+        print('failed: ' + response.body);
+        Toast.show("Failed! " + response.body, context,
+            backgroundColor: Colors.deepOrangeAccent);
+      } on FormatException catch (exception) {
+        print('Exception: ' + exception.toString());
+        print('Error' + response.body);
+      }
+    }
+
+    setState(() {
+      captured = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -63,39 +116,41 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
           backgroundColor: Colors.deepOrange,
           title: const Text('Scan QRCode on Invoice'),
         ),
-        body: Stack(
-          alignment: Alignment.center,
-          children: <Widget>[
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              color: Colors.black,
-              child: QRCaptureView(
-                controller: _captureController,
+        body: captured
+            ? CircularProgressIndicator()
+            : Stack(
+                alignment: Alignment.center,
+                children: <Widget>[
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    color: Colors.black,
+                    child: QRCaptureView(
+                      controller: _captureController,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 56),
+                    child: AspectRatio(
+                      aspectRatio: 264 / 258.0,
+                      child: Stack(
+                        alignment: _animation.value,
+                        children: <Widget>[
+                          Image.asset('images/ecorp.png'),
+                          Image.asset('images/ecorp.png')
+                        ],
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: _buildToolBar(),
+                  ),
+                  Container(
+                    child: Text('$_captureText'),
+                  )
+                ],
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 56),
-              child: AspectRatio(
-                aspectRatio: 264 / 258.0,
-                child: Stack(
-                  alignment: _animation.value,
-                  children: <Widget>[
-                    Image.asset('images/ecorp.png'),
-                    Image.asset('images/ecorp.png')
-                  ],
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: _buildToolBar(),
-            ),
-            Container(
-              child: Text('$_captureText'),
-            )
-          ],
-        ),
       ),
     );
   }
