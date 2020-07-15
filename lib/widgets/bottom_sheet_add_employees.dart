@@ -198,14 +198,10 @@ class bottomSheetAdd {
     };
 
     var jsonData, error;
-    var response = await http.post(
-        Constants.domain +"addEmployee",
-        body: data,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        });
+    var response =
+        await http.post(Constants.domain + "addEmployee", body: data, headers: {
+      'Authorization': 'Bearer $token',
+    });
     print('Status Code = ' + response.statusCode.toString());
     if (response.statusCode == 200 || response.statusCode == 201) {
       jsonData = json.decode(response.body);

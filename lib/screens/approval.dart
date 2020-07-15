@@ -9,7 +9,15 @@ import 'package:toast/toast.dart';
 
 import '../constants.dart';
 
-void main() => runApp(QRScan());
+//void main() => runApp(QRScan());
+class MyQRCode extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      body: new QRScan(),
+    );
+  }
+}
 
 class QRScan extends StatefulWidget {
   @override
@@ -20,6 +28,7 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
   QRCaptureController _captureController = QRCaptureController();
   Animation<Alignment> _animation;
   AnimationController _animationController;
+  final _formKey = new GlobalKey<FormState>();
 
   bool _isTorchOn = false, captured = false;
 
@@ -68,57 +77,72 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
   void addStock(String barcode) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token');
-
+    print('token: ' + token);
+    bool isSuccess = false;
     Map data = {'barcode': barcode};
-
+    String stock = "";
     var jsonData;
     var response =
         await http.post(Constants.domain + "barcode", body: data, headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
       'Authorization': 'Bearer $token',
     });
     print('Status Code = ' + response.statusCode.toString());
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       try {
+        isSuccess = true;
         jsonData = json.decode(response.body);
         print('success: ' + response.body);
         //parse json
-        String stock = jsonData['data']['product_stocks'].toString();
-        Toast.show("Success! Remaining $stock items", context);
+
+        stock = jsonData['data']['product_stocks'].toString();
       } on FormatException catch (exception) {
+        isSuccess = false;
         print('Exception: ' + exception.toString());
         print('Error' + response.body);
       }
     } else {
       try {
+        isSuccess = false;
         jsonData = json.decode(response.body);
         print('failed: ' + response.body);
-        Toast.show("Failed! " + response.body, context,
-            backgroundColor: Colors.deepOrangeAccent);
       } on FormatException catch (exception) {
+        isSuccess = false;
         print('Exception: ' + exception.toString());
         print('Error' + response.body);
       }
     }
-
     setState(() {
       captured = false;
+
+        isSuccess
+            ? Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text(
+                  "Success! Remaining $stock items",
+                  style: TextStyle(color: Colors.green),
+                ),
+              ))
+            : Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text(
+                  "Failed! Try again",
+                  style: TextStyle(color: Colors.orange),
+                ),
+              ));
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.deepOrange,
-          title: const Text('Scan QRCode on Invoice'),
-        ),
-        body: captured
-            ? CircularProgressIndicator()
-            : Stack(
+    final key = new GlobalKey<ScaffoldState>();
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.deepOrange,
+        title: const Text('Scan QRCode on Invoice'),
+      ),
+      body: captured
+          ? Scaffold(body: Center(child: CircularProgressIndicator()))
+          : Scaffold(
+              body: Stack(
                 alignment: Alignment.center,
                 children: <Widget>[
                   Container(
@@ -136,8 +160,7 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
                       child: Stack(
                         alignment: _animation.value,
                         children: <Widget>[
-                          Image.asset('images/ecorp.png'),
-                          Image.asset('images/ecorp.png')
+                          //                        Image.asset('assets/images/scan_area_1.png')
                         ],
                       ),
                     ),
@@ -147,11 +170,11 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
                     child: _buildToolBar(),
                   ),
                   Container(
-                    child: Text('$_captureText'),
+                    child: captured ? Text('$_captureText') : Text(""),
                   )
                 ],
               ),
-      ),
+            ),
     );
   }
 

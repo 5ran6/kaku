@@ -11,7 +11,7 @@ class bottomSheetDaily {
       final DateTime picked = await showDatePicker(
           context: context,
           initialDate: selectedDate,
-          firstDate: DateTime(2020, 6),
+          firstDate: DateTime(2020, 7),
           lastDate: DateTime(2101));
       if (picked != null && picked != selectedDate) {
         selectedDate = picked;

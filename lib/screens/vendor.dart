@@ -1,13 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kaku/screens/add_product_line.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'manage_employee.dart';
+
 class Vendor extends StatelessWidget {
+  String token;
+
   void _goto(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String token = await prefs.get("token");
+    token =  prefs.get("token").toString();
 
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => add_product_line(
@@ -18,7 +21,6 @@ class Vendor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return MaterialApp(
       home: Scaffold(
         backgroundColor: Colors.red[50],
@@ -114,7 +116,9 @@ class Vendor extends StatelessWidget {
                         margin: EdgeInsets.all(10),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(10.0),
-                          onTap: () {},
+                          onTap: () {
+                            _goto(context);
+                          },
                           child: Padding(
                             padding: const EdgeInsets.all(28.0),
                             child: Column(
@@ -126,7 +130,7 @@ class Vendor extends StatelessWidget {
                                   color: Colors.green,
                                 ),
                                 Text(
-                                  'Add a product Line',
+                                  'Product Line',
                                   style: TextStyle(
                                       color: Colors.black54,
                                       fontSize: 14,
@@ -198,7 +202,13 @@ class Vendor extends StatelessWidget {
                         margin: EdgeInsets.all(10),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(10.0),
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => ManageEmployee(
+                                token
+                              ),
+                            ));
+                          },
                           child: Padding(
                             padding: const EdgeInsets.all(28.0),
                             child: Column(

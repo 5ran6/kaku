@@ -173,8 +173,6 @@ class _DashboardScreenState extends State<DashboardScreen>
     var jsonData;
     var response = await http
         .post(Constants.domain + "perDaySalesReport", body: data, headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
       'Authorization': 'Bearer $token',
     });
     print('Status Code = ' + response.statusCode.toString());
@@ -386,7 +384,9 @@ class _DashboardScreenState extends State<DashboardScreen>
           label: 'Add Stock', //add stock
           interval: Interval(step * 2, aniInterval + step * 2),
           onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => add_stock(),
+            builder: (context) => add_stock(
+              product_no: "001",
+            ),
           )),
         ),
         _buildButton(
@@ -478,7 +478,7 @@ class _DashboardScreenState extends State<DashboardScreen>
           child: Icon(Icons.camera),
           backgroundColor: Colors.orange,
           onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => QRScan(),
+            builder: (context) => MyQRCode(),
           )),
         ),
       ),

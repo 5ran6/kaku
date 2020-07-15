@@ -3,15 +3,15 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kaku/constants.dart';
-import 'package:kaku/models/employee.dart';
-import 'package:kaku/screens/manage_employee_tile.dart';
+import 'package:kaku/models/stock.dart';
+import 'package:kaku/screens/add_stock_menu_tile.dart';
 import 'package:toast/toast.dart';
 import 'package:http/http.dart' as http;
 
 class ManageEmployee extends StatefulWidget {
   String token;
   bool loaded = false;
-  List<Employee> list;
+  List<Stock> list;
 
   ManageEmployee(this.token);
 
@@ -37,7 +37,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
         print('success: ' + response.body);
         final List parsedList = json.decode(response.body);
 
-        widget.list = parsedList.map((val) => Employee.fromJson(val)).toList();
+        widget.list = parsedList.map((val) => Stock.fromJson(val)).toList();
 
         setState(() {
           widget.loaded = true;
@@ -91,8 +91,8 @@ class _ManageEmployeeState extends State<ManageEmployee> {
               ),
               body: ListView.builder(
                 itemBuilder: (context, index) {
-                  return ManageEmployeeTile(
-                      token: widget.token, employee: widget.list[index]);
+                  return ManageStockTile(
+                      token: widget.token, stock: widget.list[index]);
                 },
               ),
             ),

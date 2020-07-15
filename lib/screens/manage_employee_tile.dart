@@ -124,8 +124,7 @@ class ManageEmployeeTile extends StatelessWidget {
     var response = await http.post(Constants.domain + "vendorActivateEmployee",
         body: data,
         headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
+
           'Authorization': 'Bearer $token',
         });
     print('Status Code = ' + response.statusCode.toString());
@@ -155,8 +154,7 @@ class ManageEmployeeTile extends StatelessWidget {
     var response = await http.post(Constants.domain + "vendorActivateEmployee",
         body: data,
         headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
+
           'Authorization': 'Bearer $token',
         });
     print('Status Code = ' + response.statusCode.toString());

@@ -93,7 +93,6 @@ class Reports extends StatelessWidget {
                 indent: 10,
                 endIndent: 10,
               ),
-
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Row(

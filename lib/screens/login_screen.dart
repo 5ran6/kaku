@@ -83,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
       jsonData = json.decode(response.body);
       print('success: ' + response.body);
       state = 1;
-      prefs.setString("token", jsonData['data']['token']);
+      prefs.setString("token", jsonData['token']);
       prefs.setString("password", loginData.password);
       prefs.setString("email", loginData.name);
       prefs.setString("name", jsonData['data']['name']);
