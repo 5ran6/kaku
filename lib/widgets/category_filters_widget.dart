@@ -30,7 +30,7 @@ class AppBarTitleWidget extends StatelessWidget {
     return Container(
         margin: EdgeInsets.only(top: 10),
         child: TextFormField(
-            onChanged: (value) => true,
+            onChanged: (value) => true, //todo> search
             decoration: new InputDecoration(
                 border: new OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5),
@@ -157,15 +157,15 @@ class CategoryFilterActionButtonWidget extends StatelessWidget {
       children: <Widget>[
         Spacer(),
         FlatButton(
-            onPressed: () => true,
+            onPressed: () => true, //TODO
             textColor: Colors.blue,
             child: Text('Cancel')),
         FlatButton(
-            onPressed: () => true,
+            onPressed: () => true, //TODO
             textColor: Colors.blue,
             child: Text('Reset')),
         RaisedButton(
-            onPressed: () => true,
+            onPressed: () => true, //TODO: Make invoice
             color: Colors.blue,
             textColor: Colors.white,
             child: Text('Apply')),

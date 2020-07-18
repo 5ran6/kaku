@@ -51,35 +51,101 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  Future<String> _singUp(LoginData data) async {
+  Future<String> _singUp(LoginData loginData) async {
+    String email = loginData.name,
+        password = loginData.password,
+        fullname = loginData.fullname,
+        business_name = loginData.business_name;
 
-    //    dynamic result =
-//        await _auth.registerWithEmailAndPassword(data.name, data.password);
-//    print('Result: ' + result.toString());
-//    if (result == null) {
-//      return 'Something went wrong';
-//    } else if (result.toString().trim() == 'ERROR_EMAIL_ALREADY_IN_USE')
-//      return 'User exists';
-//    else {
-//      state = 0;
-//    }
+    String firstname = " ", lastname = " ";
 
-    //go to home page
+    try {
+      firstname = fullname.split(" ")[0];
+      lastname = fullname.split(" ")[1];
+    } catch (e) {
+      print("Couldn't split: " + e.toString());
+      firstname = fullname;
+      lastname = ".";
+    }
+
+    Map data = {
+      'email': email,
+      'password': password,
+      'password_confirmation': password,
+      'firstname': firstname,
+      'lastname': lastname,
+      'business_name': business_name
+    };
+    print("firstname: $firstname, lastname: $lastname");
+    var jsonData;
+    var response = await http.post(Constants.domain + "signup", body: data);
+
+    if (response.statusCode == 200) {
+      jsonData = json.decode(response.body);
+      print('success: ' + response.body);
+      error = 'Registration Successful';
+      state = 0;
+      showToast('$error',
+          context: context,
+          animation: StyledToastAnimation.slideFromTop,
+          reverseAnimation: StyledToastAnimation.slideToTop,
+          position: StyledToastPosition.top,
+          startOffset: Offset(0.0, -3.0),
+          reverseEndOffset: Offset(0.0, -3.0),
+          duration: Duration(seconds: 4),
+          //Animation duration   animDuration * 2 <= duration
+          animDuration: Duration(seconds: 1),
+          curve: Curves.elasticOut,
+          reverseCurve: Curves.fastOutSlowIn);
+    } else {
+      jsonData = json.decode(response.body);
+      print('failed: ' + response.body);
+      if (jsonData['status_code'] == 422) {
+        //user not found prompt
+        error = 'Oops! Try again.';
+        state = 0;
+        showToast('$error',
+            context: context,
+            animation: StyledToastAnimation.slideFromTop,
+            reverseAnimation: StyledToastAnimation.slideToTop,
+            position: StyledToastPosition.top,
+            startOffset: Offset(0.0, -3.0),
+            reverseEndOffset: Offset(0.0, -3.0),
+            duration: Duration(seconds: 4),
+            //Animation duration   animDuration * 2 <= duration
+            animDuration: Duration(seconds: 1),
+            curve: Curves.elasticOut,
+            reverseCurve: Curves.fastOutSlowIn);
+      } else {
+        //Something went wrong prompt
+        error = 'Oops! Something went wrong.';
+        state = 0;
+        showToast('$error',
+            context: context,
+            animation: StyledToastAnimation.slideFromTop,
+            reverseAnimation: StyledToastAnimation.slideToTop,
+            position: StyledToastPosition.top,
+            startOffset: Offset(0.0, -3.0),
+            reverseEndOffset: Offset(0.0, -3.0),
+            duration: Duration(seconds: 4),
+            //Animation duration   animDuration * 2 <= duration
+            animDuration: Duration(seconds: 1),
+            curve: Curves.elasticOut,
+            reverseCurve: Curves.fastOutSlowIn);
+      }
+    }
   }
 
-
   Future<String> _login(LoginData loginData) async {
-    String email = loginData.name,
-        password = loginData.password;
+    String email = loginData.name, password = loginData.password;
 
     Map data = {'email': email, 'password': password};
 
     var jsonData;
-    var response = await http.post(Constants.domain +"signin",
-        body: data);
+    var response = await http.post(Constants.domain + "signin", body: data);
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (response.statusCode == 200 ) {
+    if (response.statusCode == 200) {
       jsonData = json.decode(response.body);
       print('success: ' + response.body);
       state = 1;
@@ -283,6 +349,8 @@ class _LoginScreenState extends State<LoginScreen> {
         print('Signup info');
         print('Name: ${loginData.name}');
         print('Password: ${loginData.password}');
+        print('Fullname: ${loginData.fullname}');
+        print('Business Name: ${loginData.business_name}');
         return _singUp(loginData);
       },
       onSubmitAnimationCompleted: () {

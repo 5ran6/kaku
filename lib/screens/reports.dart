@@ -1,26 +1,91 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kaku/screens/bottom_sheet_daily.dart';
 import 'package:kaku/screens/bottom_sheet_monthly.dart';
 import 'package:kaku/screens/bottom_sheet_weekly.dart';
+import 'package:kaku/services/formatStuff.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 
-class Reports extends StatelessWidget {
+import '../constants.dart';
+import 'package:http/http.dart' as http;
+
+class Reports extends StatefulWidget {
+  @override
+  _ReportsState createState() => _ReportsState();
+}
+
+class _ReportsState extends State<Reports> {
   final bSheetDaily = bottomSheetDaily();
-  final bSheetMonthly = bottomSheetMonthly();
-  final bSheetWeekly = bottomSheetWeekly();
 
+  final bSheetMonthly = bottomSheetMonthly();
+
+  final bSheetRange = bottomSheetRange();
+
+  String cashAtHand = '0';
+  String netProfitToday = '0';
+
+  String expensesToday = '0';
+  String paymentsAmountToday = '0';
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print(formatStuff.formatDate('today'));
+    getReportToday(formatStuff.formatDate('today'));
+  }
+
+  void getReportToday(String date) async {
+//YYYY-MM-DD
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String token = await sharedPreferences.get("token");
+    Map data = {'date': date.trim()};
+
+    var response = await http
+        .post(Constants.domain + "perDaySalesReport", body: data, headers: {
+      'Authorization': 'Bearer $token',
+    });
+    print('Status Code = ' + response.statusCode.toString());
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      try {
+        print('success: ' + response.body);
+        setState(() {
+          cashAtHand = formatStuff
+              .formatMoney(json.decode(response.body)['cash_at_hand']);
+          netProfitToday = formatStuff
+              .formatMoney(json.decode(response.body)['date_net_profit']);
+          expensesToday = formatStuff
+              .formatMoney(json.decode(response.body)['date_expenses']);
+          paymentsAmountToday = formatStuff
+              .formatMoney(json.decode(response.body)['payments_amount_total']);
+        });
+      } on FormatException catch (exception) {
+        print('Exception: ' + exception.toString());
+        print('Error' + response.body);
+        Toast.show("Error while fetching data", context);
+      }
+    } else {
+      try {
+//        Toast.show("Error while fetching data", context);
+        print('failed: ' + response.body);
+      } on FormatException catch (exception) {
+        print('Exception: ' + exception.toString());
+        print('Error: ' + response.body);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return MaterialApp(
       home: Scaffold(
-       backgroundColor: Colors.red[50],
+        backgroundColor: Colors.red[50],
         body: SafeArea(
-
           child: ListView(
-
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(4.0),
@@ -32,8 +97,8 @@ class Reports extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: CircleAvatar(
                         radius: 30.0,
-                        backgroundImage:
-                        NetworkImage("https://icon-library.com/images/store-icon-png/store-icon-png-20.jpg"),
+                        backgroundImage: NetworkImage(
+                            "https://icon-library.com/images/store-icon-png/store-icon-png-20.jpg"),
                         backgroundColor: Colors.transparent,
                       ),
                     ),
@@ -77,7 +142,7 @@ class Reports extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(10.0,0,10,5),
+                padding: const EdgeInsets.fromLTRB(10.0, 0, 10, 5),
                 child: Text(
                   "Welcome to the Reports section where the reports can be generated",
                   style: TextStyle(
@@ -99,8 +164,8 @@ class Reports extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Container(
-                      width: MediaQuery. of(context). size. width/2 - 10,
-                      height: MediaQuery. of(context). size. width/2 - 10,
+                      width: MediaQuery.of(context).size.width / 2 - 10,
+                      height: MediaQuery.of(context).size.width / 2 - 10,
                       child: Card(
                         semanticContainer: true,
                         clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -112,7 +177,8 @@ class Reports extends StatelessWidget {
                         child: InkWell(
                           borderRadius: BorderRadius.circular(10.0),
                           onTap: () {
-                            bSheetDaily.settingModalBottomSheet(context, "2020-07-06");
+                            bSheetDaily.settingModalBottomSheet(
+                                context, "2020-07-01", setState);
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(28.0),
@@ -125,7 +191,7 @@ class Reports extends StatelessWidget {
                                   color: Colors.green,
                                 ),
                                 Text(
-                                  'Daily',
+                                  'Day',
                                   style: TextStyle(
                                       color: Colors.black54,
                                       fontSize: 14,
@@ -138,8 +204,8 @@ class Reports extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      width: MediaQuery. of(context). size. width/2 - 10,
-                      height: MediaQuery. of(context). size. width/2 - 10,
+                      width: MediaQuery.of(context).size.width / 2 - 10,
+                      height: MediaQuery.of(context).size.width / 2 - 10,
                       child: Card(
                         semanticContainer: true,
                         clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -151,7 +217,8 @@ class Reports extends StatelessWidget {
                         child: InkWell(
                           borderRadius: BorderRadius.circular(10.0),
                           onTap: () {
-                            bSheetWeekly.settingModalBottomSheet(context);
+                            bSheetRange.settingModalBottomSheet(
+                                context, "Select a range");
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(28.0),
@@ -159,12 +226,12 @@ class Reports extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 Icon(
-                                  Icons.view_week,
+                                  Icons.date_range,
                                   size: 30,
                                   color: Colors.brown[600],
                                 ),
                                 Text(
-                                  'Weekly',
+                                  'Range',
                                   style: TextStyle(
                                       color: Colors.black54,
                                       fontSize: 14,
@@ -185,8 +252,8 @@ class Reports extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Container(
-                      width: MediaQuery. of(context). size. width/2 - 10,
-                      height: MediaQuery. of(context). size. width/2 - 10,
+                      width: MediaQuery.of(context).size.width / 2 - 10,
+                      height: MediaQuery.of(context).size.width / 2 - 10,
                       child: Card(
                         semanticContainer: true,
                         clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -211,7 +278,7 @@ class Reports extends StatelessWidget {
                                   color: Colors.blueAccent,
                                 ),
                                 Text(
-                                  'Monthly',
+                                  'Month',
                                   style: TextStyle(
                                       color: Colors.black54,
                                       fontSize: 14,
@@ -224,8 +291,8 @@ class Reports extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      width: MediaQuery. of(context). size. width/2 - 10,
-                      height: MediaQuery. of(context). size. width/2 - 10,
+                      width: MediaQuery.of(context).size.width / 2 - 10,
+                      height: MediaQuery.of(context).size.width / 2 - 10,
                       child: Card(
                         semanticContainer: true,
                         clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -252,7 +319,6 @@ class Reports extends StatelessWidget {
                                   style: TextStyle(
                                       color: Colors.black54,
                                       fontSize: 14,
-
                                       fontWeight: FontWeight.bold),
                                 ),
                               ],
@@ -267,14 +333,39 @@ class Reports extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Total cash at hand: N300,500.00"
-                , style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+                  "Total cash at hand today: ₦$cashAtHand",
+                  style: TextStyle(
+                      fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
                 ),
-              ), Padding(
+              ),
+              Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Gross profit: N250,790.00"
-                , style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, color: Colors.green[900]),
+                  "Net profit today: ₦$netProfitToday",
+                  style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green[900]),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Today's expenses: ₦$expensesToday",
+                  style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepOrange[700]),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Payments amount today: ₦$paymentsAmountToday",
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],

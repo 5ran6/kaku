@@ -1,10 +1,10 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:kaku/models/users.dart';
 
 import '../models/users.dart';
+import '../transition_route_observer.dart';
 
 class Dashboard extends StatefulWidget {
   Widget home;
@@ -18,10 +18,11 @@ class Dashboard extends StatefulWidget {
   _DashboardState createState() => _DashboardState();
 }
 
-class _DashboardState extends State<Dashboard> {
+class _DashboardState extends State<Dashboard>
+    with TickerProviderStateMixin, TransitionRouteAware {
   @override
   Widget build(BuildContext context) {
-   // final userData = Provider.of<List<Users>>(context);
+    // final userData = Provider.of<List<Users>>(context);
 
 //    userData.forEach((user){
 //      print(user.online);
@@ -39,7 +40,7 @@ class _DashboardState extends State<Dashboard> {
               SizedBox(height: 40),
               Expanded(
                 flex: 2,
-                child: widget._buildHeader,  //theme
+                child: widget._buildHeader, //theme
               ),
               Expanded(
                 flex: 8,

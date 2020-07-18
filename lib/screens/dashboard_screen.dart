@@ -144,7 +144,6 @@ class _DashboardScreenState extends State<DashboardScreen>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
     routeObserver.subscribe(this, ModalRoute.of(context));
   }
 
@@ -187,6 +186,7 @@ class _DashboardScreenState extends State<DashboardScreen>
         print('Exception: ' + exception.toString());
         print('Error' + response.body);
         done = false;
+        i=0;
       }
     } else {
       try {
