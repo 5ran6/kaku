@@ -7,25 +7,13 @@ import 'package:toast/toast.dart';
 import 'package:http/http.dart' as http;
 
 import '../constants.dart';
+import 'add_product_line.dart';
 
 class bottomSheetAddSubCategory {
   void settingModalBottomSheet(context, List category, String token) {
     TextEditingController _productSubCategoryNameController =
         new TextEditingController();
-    List category = [
-      {'name': 'January', 'value': '1'},
-      {'name': 'February', 'value': '2'},
-      {'name': 'March', 'value': '3'},
-      {'name': 'April', 'value': '4'},
-      {'name': 'May', 'value': '5'},
-      {'name': 'June', 'value': '6'},
-      {'name': 'July', 'value': '7'},
-      {'name': 'August', 'value': '8'},
-      {'name': 'September', 'value': '9'},
-      {'name': 'October', 'value': '10'},
-      {'name': 'November', 'value': '11'},
-      {'name': 'December', 'value': '12'}
-    ];
+
     String category_id = "1";
     showModalBottomSheet(
         context: context,
@@ -46,6 +34,7 @@ class bottomSheetAddSubCategory {
                       onFieldSubmitted: (v) {
                         FocusScope.of(context).requestFocus(FocusNode());
                       },
+                      keyboardType: TextInputType.text,
                       textInputAction: TextInputAction.done,
                       autofocus: false,
                       style: TextStyle(color: Colors.black),
@@ -60,12 +49,12 @@ class bottomSheetAddSubCategory {
                     child: DropdownButtonFormField(
                       decoration: InputDecoration(
                         prefixIcon: Icon(Icons.calendar_today),
-                        labelText: "Select a category",
+                        labelText: "Select the category it falls under",
                         filled: true,
                         fillColor: Colors.white,
                         errorStyle: TextStyle(color: Colors.yellow),
                       ),
-                      value: "1",
+                      value: category[0]['value'],
                       items: category.map((map) {
                         return DropdownMenuItem(
                           child: Text(map['name']),
@@ -120,7 +109,11 @@ class bottomSheetAddSubCategory {
       jsonData = json.decode(response.body);
       print('success: ' + response.body);
       Toast.show('Done', context);
-      Navigator.pop(context);
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => add_product_line(
+          token: token,
+        ),
+      ));
     } else {
       try {
         jsonData = json.decode(response.body);

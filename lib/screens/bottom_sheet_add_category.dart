@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kaku/constants.dart';
+import 'package:kaku/screens/add_product_line.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:toast/toast.dart';
@@ -27,6 +28,7 @@ class bottomSheetAddCategory {
                         FocusScope.of(context).requestFocus(FocusNode());
                       },
                       textInputAction: TextInputAction.done,
+                      keyboardType: TextInputType.text,
                       autofocus: true,
                       style: TextStyle(color: Colors.black),
                       decoration: InputDecoration(
@@ -74,7 +76,11 @@ class bottomSheetAddCategory {
       jsonData = json.decode(response.body);
       print('success: ' + response.body);
       Toast.show('Done', context);
-      Navigator.pop(context);
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => add_product_line(
+          token: token,
+        ),
+      ));
     } else {
       try {
         jsonData = json.decode(response.body);

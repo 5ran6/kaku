@@ -65,10 +65,7 @@ class _add_product_lineState extends State<add_product_line> {
   String expiry;
   DateTime selectedDate = DateTime.now();
 
-
-  List subcategory = [
-
-  ];
+  List subcategory = [];
   List monthList = [
     {'name': 'January', 'value': '1'},
     {'name': 'February', 'value': '2'},
@@ -85,7 +82,6 @@ class _add_product_lineState extends State<add_product_line> {
   ];
 
   List categoryList = [];
-
 
   Future _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
@@ -131,6 +127,19 @@ class _add_product_lineState extends State<add_product_line> {
     if (response.statusCode == 200 || response.statusCode == 201) {
       jsonData = json.decode(response.body);
       print('success: ' + response.body);
+      showToast('Added Successfully',
+          context: context,
+          animation: StyledToastAnimation.slideFromBottomFade,
+          reverseAnimation: StyledToastAnimation.slideToTop,
+          position: StyledToastPosition.top,
+          startOffset: Offset(0.0, -3.0),
+          reverseEndOffset: Offset(0.0, -3.0),
+          duration: Duration(seconds: 4),
+          //Animation duration   animDuration * 2 <= duration
+          animDuration: Duration(seconds: 1),
+          curve: Curves.elasticOut,
+          reverseCurve: Curves.fastOutSlowIn);
+
       setState(() {
         //clearAllFields();
         _isLoading = false;
@@ -185,6 +194,7 @@ class _add_product_lineState extends State<add_product_line> {
     super.initState();
     //getCategories
     getcategories();
+    getSubcategories();
   }
 
   void getcategories() async {
@@ -194,7 +204,8 @@ class _add_product_lineState extends State<add_product_line> {
     String token = await sharedPreferences.get("token");
 
     var jsonData;
-    var response = await http.get(Constants.domain + "getProductCategory", headers: {
+    var response =
+        await http.get(Constants.domain + "getProductCategory", headers: {
       'Authorization': 'Bearer $token',
     });
     print('Status Code = ' + response.statusCode.toString());
@@ -203,27 +214,23 @@ class _add_product_lineState extends State<add_product_line> {
       print('success: ' + response.body);
       //parse Category List
       Map<String, dynamic> categoriesFromApi = json.decode(response.body);
-     List cat = categoriesFromApi['categories'];
-      for(final i in cat){
-        var categoryMap = {
-          'name': i['name'],
-          'value': i['id'].toString()
-        };
+      List cat = categoriesFromApi['categories'];
+      for (final i in cat) {
+        var categoryMap = {'name': i['name'], 'value': i['id'].toString()};
 
         categoryList.add(categoryMap);
       }
-print('Category List: '+categoryList.toString());
+      print('Category List: ' + categoryList.toString());
 
       setState(() {
-      //  clearAllFields();
+        //  clearAllFields();
         _isLoading = false;
       });
     } else {
       try {
         // jsonData = json.decode(response.body);
         print('failed: ' + response.body);
-        if (response.statusCode >= 400 ) {
-
+        if (response.statusCode >= 400) {
           showToast('$error',
               context: context,
               animation: StyledToastAnimation.slideFromTop,
@@ -259,15 +266,79 @@ print('Category List: '+categoryList.toString());
     }
   }
 
-  void getSubcategory(String category, String token) async {
+  void getSubcategories() async {
     //getSubCategories
+    //getCategories
+//    Map data = {'name': name.trim()};
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String token = await sharedPreferences.get("token");
 
+    var jsonData;
+    var response =
+        await http.get(Constants.domain + "getProductSubCategory", headers: {
+      'Authorization': 'Bearer $token',
+    });
+    print('Status Code = ' + response.statusCode.toString());
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      jsonData = json.decode(response.body);
+      print('success: ' + response.body);
+      //parse Category List
+      Map<String, dynamic> categoriesFromApi = json.decode(response.body);
+      List cat = categoriesFromApi['sub_categories'];
+      for (final i in cat) {
+        var categoryMap = {'name': i['name'], 'value': i['id'].toString()};
+
+        subcategory.add(categoryMap);
+      }
+      print('Subcategory List: ' + subcategory.toString());
+
+      setState(() {
+        //  clearAllFields();
+        _isLoading = false;
+      });
+    } else {
+      try {
+        // jsonData = json.decode(response.body);
+        print('failed: ' + response.body);
+        if (response.statusCode >= 400) {
+          showToast('$error',
+              context: context,
+              animation: StyledToastAnimation.slideFromTop,
+              reverseAnimation: StyledToastAnimation.slideToTop,
+              position: StyledToastPosition.top,
+              startOffset: Offset(0.0, -3.0),
+              reverseEndOffset: Offset(0.0, -3.0),
+              duration: Duration(seconds: 4),
+              //Animation duration   animDuration * 2 <= duration
+              animDuration: Duration(seconds: 1),
+              curve: Curves.elasticOut,
+              reverseCurve: Curves.fastOutSlowIn);
+          Navigator.pop(context);
+        }
+      } on FormatException catch (exception) {
+        print('Exception: ' + exception.toString());
+        print('Error' + response.body);
+        error = 'Oops! Something went wrong.';
+        Navigator.pop(context);
+        showToast('$error',
+            context: context,
+            animation: StyledToastAnimation.slideFromTop,
+            reverseAnimation: StyledToastAnimation.slideToTop,
+            position: StyledToastPosition.top,
+            startOffset: Offset(0.0, -3.0),
+            reverseEndOffset: Offset(0.0, -3.0),
+            duration: Duration(seconds: 4),
+            //Animation duration   animDuration * 2 <= duration
+            animDuration: Duration(seconds: 1),
+            curve: Curves.elasticOut,
+            reverseCurve: Curves.fastOutSlowIn);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     //signUp function
-
 
     return MaterialApp(
       home: Scaffold(
@@ -345,30 +416,6 @@ print('Category List: '+categoryList.toString());
                               //////drop downs
                               Padding(
                                 padding: const EdgeInsets.all(18.0),
-//                                child: TextFormField(
-//                                  validator: _validateLastName,
-//                                  onSaved: (String value) {
-//                                    lastName = value;
-//                                  },
-//                                  controller: _lastNameController,
-//                                  textCapitalization: TextCapitalization.words,
-//                                  onFieldSubmitted: (v) {
-//                                    FocusScope.of(context).requestFocus(focus2);
-//                                  },
-//                                  focusNode: focus1,
-//                                  textInputAction: TextInputAction.next,
-//                                  style: TextStyle(
-//                                    color: Colors.black,
-//                                  ),
-//                                  keyboardType: TextInputType.text,
-//                                  decoration: InputDecoration(
-//                                      labelText: 'Cost Price',
-//                                      hintText: 'Amount',
-//                                      labelStyle:
-//                                          TextStyle(color: Colors.black54),
-//                                      border: OutlineInputBorder()),
-//                                ),
-
                                 child: DropdownButtonFormField(
                                   decoration: InputDecoration(
                                     prefixIcon: Icon(Icons.category),
@@ -377,7 +424,7 @@ print('Category List: '+categoryList.toString());
                                     fillColor: Colors.white,
                                     errorStyle: TextStyle(color: Colors.yellow),
                                   ),
-                                  value: "1",
+                                  value: categoryList[0]['value'],
                                   items: categoryList.map((map) {
                                     return DropdownMenuItem(
                                       child: Text(map['name']),
@@ -387,8 +434,6 @@ print('Category List: '+categoryList.toString());
                                   onChanged: (dynamic value) {
                                     _productCategoryController.text = value;
                                     productCategory = value;
-
-                                    //TODO: server call for subCategory using 'value'
                                   },
                                 ),
                               ),
@@ -402,7 +447,7 @@ print('Category List: '+categoryList.toString());
                                     fillColor: Colors.white,
                                     errorStyle: TextStyle(color: Colors.yellow),
                                   ),
-                                  value: "0",
+                                  value: subcategory[0]['value'],
                                   items: subcategory.map((map) {
                                     return DropdownMenuItem(
                                       child: Text(map['name']),
@@ -447,6 +492,7 @@ print('Category List: '+categoryList.toString());
                                         color: Colors.blue,
                                       ),
                                       labelText: 'Cost Price',
+                                      hintText: "Amount",
                                       labelStyle:
                                           TextStyle(color: Colors.black54),
                                       border: OutlineInputBorder()),
@@ -476,7 +522,7 @@ print('Category List: '+categoryList.toString());
                                         color: Colors.blue,
                                       ),
                                       labelText: 'Selling Price',
-                                      hintText: '',
+                                      hintText: "Amount",
                                       labelStyle:
                                           TextStyle(color: Colors.black54),
                                       border: OutlineInputBorder()),
@@ -605,7 +651,7 @@ print('Category List: '+categoryList.toString());
                                       bottomSheetAddSubCategory()
                                           .settingModalBottomSheet(
                                               context,
-                                              null,
+                                              categoryList,
                                               widget.token); //remove the null
                                     },
                                   ),
