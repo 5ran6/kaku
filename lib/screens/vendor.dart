@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kaku/screens/add_product_line.dart';
+import 'package:kaku/screens/add_product_line_menu.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'manage_employee.dart';
@@ -13,8 +14,8 @@ class Vendor extends StatelessWidget {
     token =  prefs.get("token").toString();
 
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => add_product_line(
-        token: token,
+      builder: (context) => ProductsList(
+
       ),
     ));
   }
@@ -53,7 +54,7 @@ class Vendor extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          "Abraham Udele ",
+                          "Store Owner ",
                           maxLines: 1,
                           style: TextStyle(
                               color: Colors.black,
@@ -61,7 +62,7 @@ class Vendor extends StatelessWidget {
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          "Address of Store or Something related ",
+                          "Address of Store not available ",
                           maxLines: 2,
                           style: TextStyle(
                               color: Colors.black,
@@ -164,12 +165,12 @@ class Vendor extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 Icon(
-                                  Icons.attach_money,
+                                  Icons.store,
                                   size: 30,
                                   color: Colors.red[300],
                                 ),
                                 Text(
-                                  'Manage Products',
+                                  'Manage Stock',
                                   style: TextStyle(
                                       color: Colors.black54,
                                       fontSize: 14,

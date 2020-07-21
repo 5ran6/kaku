@@ -21,7 +21,7 @@ class formatStuff {
 
   static String formatMoney(String amount) {
     return new NumberFormat.simpleCurrency(locale: "en_US")
-        .format(amount)
+        .format(amount.trim())
         .toString();
   }
 }

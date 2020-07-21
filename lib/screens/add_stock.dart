@@ -7,21 +7,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:kaku/screens/dashboard_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:kaku/screens/invoices.dart';
 import 'package:toast/toast.dart';
 
 import '../constants.dart';
 
 class add_stock extends StatefulWidget {
-   String regNo,
-      product_no,
-      cost_price,
-      selling_price,
-      quantity,
-      discount,
-      description;
+  String product_no;
+  String cost_price = '';
+  String selling_price = '';
+  String quantity = ' ';
+  String discount = ' ';
+  String description = ' ';
 
   add_stock(
       {Key key,
@@ -55,13 +52,12 @@ class _add_stockState extends State<add_stock> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
-  TextEditingController _productNumberController = new TextEditingController();
+  TextEditingController _productNumberController = TextEditingController();
   TextEditingController _costPriceController = new TextEditingController();
   TextEditingController _sellingPriceController = new TextEditingController();
   TextEditingController _descriptionController = new TextEditingController();
   TextEditingController _quantityController = new TextEditingController();
-  TextEditingController _discountController = new TextEditingController();
-  TextEditingController _childCodeController = new TextEditingController();
+  TextEditingController _discountController = new TextEditingController(text: '0');
 
   //strings to save state
   String productNumber;
@@ -71,8 +67,8 @@ class _add_stockState extends State<add_stock> {
   String discount;
   String description;
 
-  addStock(String product_id, String cost_price, String selling_price, String quantity,
-      String discount, String description) async {
+  addStock(String product_id, String cost_price, String selling_price,
+      String quantity, String discount, String description) async {
     Map data = {
       'product_id': product_id.trim(),
       'cost_price': cost_price.trim(),
@@ -87,10 +83,9 @@ class _add_stockState extends State<add_stock> {
 
     var jsonData;
     var response =
-    await http.post(Constants.domain + "addStock", body: data, headers: {
+        await http.post(Constants.domain + "addStock", body: data, headers: {
       'Authorization': 'Bearer $token',
     });
-
 
     print('Status Code = ' + response.statusCode.toString());
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -109,14 +104,13 @@ class _add_stockState extends State<add_stock> {
           //user not found prompt
           setState(() {
             ///////////TODO///////////////////////////////////////////
-            if (jsonData['errors']['email'].toString() != 'null') {
-              error = jsonData['errors']['email'].toString().substring(
-                  1, jsonData['errors']['email'].toString().length - 1);
-            } else if (jsonData['errors']['user'].toString() != 'null') {
-              print('reached here');
-              error = jsonData['errors']['user'].toString().substring(
-                  1, jsonData['errors']['user'].toString().length - 1);
-            } else {
+            if (jsonData['errors']['product_id'].toString() != 'null') {
+              error = jsonData['errors']['product_id'].toString().substring(
+                  1, jsonData['errors']['product_id'].toString().length - 1);
+            }else if(jsonData['errors']['discount'].toString() != 'null'){
+              error = jsonData['errors']['discount'].toString().substring(
+                  1, jsonData['errors']['discount'].toString().length - 1);
+            }  else {
               error = jsonData['message'].toString();
             }
             //////////////////////////////////////////////////////
@@ -156,12 +150,10 @@ class _add_stockState extends State<add_stock> {
             reverseCurve: Curves.fastOutSlowIn);
       }
     }
-
   }
 
   @override
   Widget build(BuildContext context) {
-
     String getSystemTime() {
       var now = new DateTime.now();
       return new DateFormat("H:m:s").format(now);
@@ -228,15 +220,14 @@ class _add_stockState extends State<add_stock> {
                               Padding(
                                 padding: const EdgeInsets.all(18.0),
                                 child: TextFormField(
-                                  controller: _productNumberController,
+                                  initialValue: widget.product_no,
                                   onFieldSubmitted: (v) {
                                     FocusScope.of(context).requestFocus(focus1);
                                   },
                                   onSaved: (String value) {
-                                    productNumber = value;
+                                    productNumber = widget.product_no;
                                   },
                                   textInputAction: TextInputAction.next,
-                                  initialValue: widget.product_no,
                                   validator: _validateProductNumber,
                                   enabled: false,
                                   style: TextStyle(color: Colors.grey[900]),
@@ -256,8 +247,7 @@ class _add_stockState extends State<add_stock> {
                                     costPrice = value;
                                   },
                                   controller: _costPriceController,
-                                  initialValue: widget.cost_price == "" || widget.cost_price == null ? "": widget.cost_price,
-                                  textCapitalization: TextCapitalization.words,
+                                   textCapitalization: TextCapitalization.words,
                                   onFieldSubmitted: (v) {
                                     FocusScope.of(context).requestFocus(focus2);
                                   },
@@ -270,7 +260,7 @@ class _add_stockState extends State<add_stock> {
                                   keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
                                       labelText: 'Cost Price',
-                                      hintText: 'Amount',
+                                      hintText: 'Amount in ₦',
                                       labelStyle:
                                           TextStyle(color: Colors.black54),
                                       border: OutlineInputBorder()),
@@ -284,8 +274,7 @@ class _add_stockState extends State<add_stock> {
                                   },
                                   validator: _validateSellingPrice,
                                   controller: _sellingPriceController,
-                                  initialValue: widget.selling_price == "" || widget.selling_price == null ? "": widget.selling_price,
-                                  textInputAction: TextInputAction.next,
+                                   textInputAction: TextInputAction.next,
                                   onFieldSubmitted: (v) {
                                     FocusScope.of(context).requestFocus(focus3);
                                   },
@@ -294,7 +283,7 @@ class _add_stockState extends State<add_stock> {
                                   keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
                                       labelText: 'Selling Price',
-                                      hintText: 'Amount',
+                                      hintText: 'Amount in ₦',
                                       labelStyle:
                                           TextStyle(color: Colors.black54),
                                       border: OutlineInputBorder()),
@@ -308,8 +297,7 @@ class _add_stockState extends State<add_stock> {
                                   },
                                   validator: _validateQuantity,
                                   controller: _quantityController,
-                                  initialValue: widget.quantity == "" || widget.quantity == null ? "": widget.quantity,
-                                  textInputAction: TextInputAction.next,
+                                   textInputAction: TextInputAction.next,
                                   keyboardType: TextInputType.number,
                                   onFieldSubmitted: (v) {
                                     FocusScope.of(context).requestFocus(focus4);
@@ -334,8 +322,7 @@ class _add_stockState extends State<add_stock> {
                                   },
 //                                  validator: _validateConfirmPassword,
                                   controller: _discountController,
-                                  initialValue: widget.discount == "" || widget.discount == null ? "0": widget.discount,
-                                  textInputAction: TextInputAction.next,
+                                      textInputAction: TextInputAction.next,
                                   onFieldSubmitted: (v) {
                                     FocusScope.of(context).requestFocus(focus5);
                                   },
@@ -345,7 +332,7 @@ class _add_stockState extends State<add_stock> {
                                   ),
                                   decoration: InputDecoration(
                                       labelText: 'Discount',
-                                      hintText: 'Amount',
+                                      hintText: 'Amount in ₦',
                                       labelStyle:
                                           TextStyle(color: Colors.black54),
                                       border: OutlineInputBorder()),
@@ -364,8 +351,7 @@ class _add_stockState extends State<add_stock> {
                                     color: Colors.black,
                                   ),
                                   keyboardType: TextInputType.multiline,
-                                  initialValue: widget.description == "" || widget.description == null ? "": widget.description,
-                                  decoration: InputDecoration(
+                                    decoration: InputDecoration(
                                       labelText: 'Description (optional)',
                                       hintText: 'Some text',
                                       labelStyle:
@@ -485,6 +471,7 @@ class _add_stockState extends State<add_stock> {
 
     return 'Please enter a Cost Price';
   }
+
   String _validateSellingPrice(String value) {
     if (value.length > 0) {
       return null;
@@ -509,7 +496,7 @@ class _add_stockState extends State<add_stock> {
         _isLoading = true;
       });
       addStock(
-          _productNumberController.text.trim().toUpperCase(),
+          productNumber.trim().toUpperCase(),
           _costPriceController.text.trim().toUpperCase(),
           _sellingPriceController.text.trim().toUpperCase(),
           _quantityController.text.trim(),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:intl/intl.dart';
+import 'package:kaku/screens/add_stock_menu.dart';
 import 'package:kaku/screens/invoices.dart';
 import 'package:kaku/screens/reports.dart';
 import 'package:kaku/screens/vendor.dart';
@@ -47,6 +48,7 @@ class _DashboardScreenState extends State<DashboardScreen>
 
   bool sign = false;
   double i = 0;
+  String token;
 
   Future<bool> _goToLogi(BuildContext context) async {
     try {
@@ -186,7 +188,7 @@ class _DashboardScreenState extends State<DashboardScreen>
         print('Exception: ' + exception.toString());
         print('Error' + response.body);
         done = false;
-        i=0;
+        i = 0;
       }
     } else {
       try {
@@ -202,7 +204,8 @@ class _DashboardScreenState extends State<DashboardScreen>
 
   void getCount() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString('token');
+
+    token = prefs.getString('token');
     getSalesCount(getDate(), token);
   }
 
@@ -384,9 +387,7 @@ class _DashboardScreenState extends State<DashboardScreen>
           label: 'Add Stock', //add stock
           interval: Interval(step * 2, aniInterval + step * 2),
           onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => add_stock(
-              product_no: "001",
-            ),
+            builder: (context) => StockList(),
           )),
         ),
         _buildButton(
