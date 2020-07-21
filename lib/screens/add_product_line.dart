@@ -40,7 +40,7 @@ class _add_product_lineState extends State<add_product_line> {
   final focus7 = FocusNode();
 
   bool _isLoading = true;
-  var error = '';
+  var error = 'Try again';
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
@@ -64,6 +64,28 @@ class _add_product_lineState extends State<add_product_line> {
   String discount;
   String expiry;
   DateTime selectedDate = DateTime.now();
+
+
+  List subcategory = [
+
+  ];
+  List monthList = [
+    {'name': 'January', 'value': '1'},
+    {'name': 'February', 'value': '2'},
+    {'name': 'March', 'value': '3'},
+    {'name': 'April', 'value': '4'},
+    {'name': 'May', 'value': '5'},
+    {'name': 'June', 'value': '6'},
+    {'name': 'July', 'value': '7'},
+    {'name': 'August', 'value': '8'},
+    {'name': 'September', 'value': '9'},
+    {'name': 'October', 'value': '10'},
+    {'name': 'November', 'value': '11'},
+    {'name': 'December', 'value': '12'}
+  ];
+
+  List categoryList = [];
+
 
   Future _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
@@ -110,7 +132,7 @@ class _add_product_lineState extends State<add_product_line> {
       jsonData = json.decode(response.body);
       print('success: ' + response.body);
       setState(() {
-        clearAllFields();
+        //clearAllFields();
         _isLoading = false;
       });
     } else {
@@ -172,7 +194,7 @@ class _add_product_lineState extends State<add_product_line> {
     String token = await sharedPreferences.get("token");
 
     var jsonData;
-    var response = await http.get(Constants.domain + "getCategories", headers: {
+    var response = await http.get(Constants.domain + "getProductCategory", headers: {
       'Authorization': 'Bearer $token',
     });
     print('Status Code = ' + response.statusCode.toString());
@@ -180,17 +202,28 @@ class _add_product_lineState extends State<add_product_line> {
       jsonData = json.decode(response.body);
       print('success: ' + response.body);
       //parse Category List
+      Map<String, dynamic> categoriesFromApi = json.decode(response.body);
+     List cat = categoriesFromApi['categories'];
+      for(final i in cat){
+        var categoryMap = {
+          'name': i['name'],
+          'value': i['id'].toString()
+        };
+
+        categoryList.add(categoryMap);
+      }
+print('Category List: '+categoryList.toString());
 
       setState(() {
-        clearAllFields();
+      //  clearAllFields();
         _isLoading = false;
       });
     } else {
       try {
         // jsonData = json.decode(response.body);
         print('failed: ' + response.body);
-        if (response.statusCode == 422) {
-          //user not found prompt
+        if (response.statusCode >= 400 ) {
+
           showToast('$error',
               context: context,
               animation: StyledToastAnimation.slideFromTop,
@@ -235,39 +268,6 @@ class _add_product_lineState extends State<add_product_line> {
   Widget build(BuildContext context) {
     //signUp function
 
-
-    List subcategory = [
-      {'name': '', 'value': '0'}
-    ];
-    List monthList = [
-      {'name': 'January', 'value': '1'},
-      {'name': 'February', 'value': '2'},
-      {'name': 'March', 'value': '3'},
-      {'name': 'April', 'value': '4'},
-      {'name': 'May', 'value': '5'},
-      {'name': 'June', 'value': '6'},
-      {'name': 'July', 'value': '7'},
-      {'name': 'August', 'value': '8'},
-      {'name': 'September', 'value': '9'},
-      {'name': 'October', 'value': '10'},
-      {'name': 'November', 'value': '11'},
-      {'name': 'December', 'value': '12'}
-    ];
-
-    List categoryList = [
-      {'name': 'January', 'value': '1'},
-      {'name': 'February', 'value': '2'},
-      {'name': 'March', 'value': '3'},
-      {'name': 'April', 'value': '4'},
-      {'name': 'May', 'value': '5'},
-      {'name': 'June', 'value': '6'},
-      {'name': 'July', 'value': '7'},
-      {'name': 'August', 'value': '8'},
-      {'name': 'September', 'value': '9'},
-      {'name': 'October', 'value': '10'},
-      {'name': 'November', 'value': '11'},
-      {'name': 'December', 'value': '12'}
-    ];
 
     return MaterialApp(
       home: Scaffold(
