@@ -75,7 +75,7 @@ class bottomSheetDaily {
         }
       } else {
         try {
-//          Toast.show("Something went wrong", context);
+          Toast.show(json.decode(response.body)['errors']['data'].toString().substring(1, json.decode(response.body)['errors']['data'].toString().length-1), context);
           print('failed: ' + response.body);
         } on FormatException catch (exception) {
           print('Exception: ' + exception.toString());

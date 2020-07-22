@@ -48,7 +48,7 @@ class _DashboardScreenState extends State<DashboardScreen>
 
   bool sign = false;
   double i = 0;
-  String token;
+  String token, name;
 
   Future<bool> _goToLogi(BuildContext context) async {
     try {
@@ -206,6 +206,7 @@ class _DashboardScreenState extends State<DashboardScreen>
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     token = prefs.getString('token');
+    name = prefs.getString('name');
     getSalesCount(getDate(), token);
   }
 
@@ -395,7 +396,7 @@ class _DashboardScreenState extends State<DashboardScreen>
           label: "Vendor", //
           interval: Interval(0, aniInterval),
           onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => Vendor(),
+            builder: (context) => Vendor(name: name),
           )),
         ),
         _buildButton(
@@ -411,7 +412,7 @@ class _DashboardScreenState extends State<DashboardScreen>
           label: 'Reports', //sales history per day
           interval: Interval(step * 2, aniInterval + step * 2),
           onPressed: () => Navigator.of(context).push(FadePageRoute(
-            builder: (context) => Reports(),
+            builder: (context) => Reports(name: name),
           )),
         ),
         _buildButton(

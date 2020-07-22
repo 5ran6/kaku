@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;import 'package:flutter/cupertino.dart';
+import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
@@ -13,18 +14,22 @@ class bottomSheetRange {
     DateTime selectedDate = DateTime.now();
     String cashAtHand = '0';
     String netProfitToday = '0';
+    String end;
+    String start;
 
     String expensesToday = '0';
     String paymentsAmountToday = '0';
     String date = passed;
 // 2020-07-06
-    void getReportToday(String date) async {
+    void getReportRange(String start_date, String end_date) async {
 //YYYY-MM-DD
-      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
       String token = await sharedPreferences.get("token");
+      Map data = {'date_from': start_date, 'date_to': end_date};
 
-      var response =
-      await http.get(Constants.domain + "payDaySalesReport", headers: {
+      var response = await http
+          .post(Constants.domain + "daterangeSalesReport", body: data, headers: {
         'Authorization': 'Bearer $token',
       });
       print('Status Code = ' + response.statusCode.toString());
@@ -40,7 +45,6 @@ class bottomSheetRange {
               .formatMoney(json.decode(response.body)['date_expenses']);
           paymentsAmountToday = formatStuff
               .formatMoney(json.decode(response.body)['payments_amount_total']);
-
         } on FormatException catch (exception) {
           print('Exception: ' + exception.toString());
           print('Error' + response.body);
@@ -54,22 +58,6 @@ class bottomSheetRange {
           print('Exception: ' + exception.toString());
           print('Error: ' + response.body);
         }
-      }
-    }
-
-
-    Future<Null> _selectDate(BuildContext context) async {
-      final DateTime picked = await showDatePicker(
-          context: context,
-          initialDate: selectedDate,
-          firstDate: DateTime(2020, 7),
-          lastDate: DateTime(2101));
-      if (picked != null && picked != selectedDate) {
-        selectedDate = picked;
-        // Toast.show(selectedDate.toLocal().toString(), context);
-        date = "${selectedDate.toLocal()}".split(' ')[0];
-        Navigator.pop(context);
-        settingModalBottomSheet(context, date);
       }
     }
 
@@ -95,28 +83,38 @@ class bottomSheetRange {
                           height: 20.0,
                           width: 10.0,
                         ),
-                        RaisedButton(
-                          onPressed: () => _selectDate(context),
-                          child: Text('Select date range'),
-                        ),
                         new MaterialButton(
                             color: Colors.deepOrangeAccent,
                             onPressed: () async {
-                              final List<DateTime> picked = await DateRagePicker.showDatePicker(
-                                  context: context,
-                                  initialFirstDate: new DateTime.now(),
-                                  initialLastDate: (new DateTime.now()).add(new Duration(days: 7)),
-                                  firstDate: new DateTime(2020),
-                                  lastDate: new DateTime(2101)
-                              );
+                              Toast.show(
+                                  "Select the START date and then the END date",
+                                  context,
+                                  duration: 4);
+                              final List<DateTime> picked =
+                                  await DateRagePicker.showDatePicker(
+                                      context: context,
+                                      initialFirstDate: new DateTime.now(),
+                                      initialLastDate: (new DateTime.now())
+                                          .add(new Duration(days: 7)),
+                                      firstDate: new DateTime(2020),
+                                      lastDate: new DateTime(2101));
                               if (picked != null && picked.length == 2) {
                                 print(picked);
+                                DateTime start_date = picked[0];
+                                DateTime end_date = picked[1];
 
+                                start =
+                                    start_date.toIso8601String().split("T")[0];
 
+                                end = end_date.toIso8601String().split("T")[0];
+                                print(start_date
+                                        .toIso8601String()
+                                        .split("T")[0] +
+                                    ':::' +
+                                    end_date.toIso8601String().split("T")[0]);
                               }
                             },
-                            child: new Text("Pick date range")
-                        )
+                            child: new Text("Pick date range"))
                       ],
                     ),
                   ),
@@ -124,8 +122,7 @@ class bottomSheetRange {
                     alignment: Alignment.bottomRight,
                     child: new FlatButton(
                       onPressed: () {
-
-                        getReportToday(date);
+                        getReportRange(start, end);
                       },
                       child: Text(
                         "Submit",

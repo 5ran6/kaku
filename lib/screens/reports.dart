@@ -13,6 +13,9 @@ import '../constants.dart';
 import 'package:http/http.dart' as http;
 
 class Reports extends StatefulWidget {
+ String name;
+  Reports({this.name});
+
   @override
   _ReportsState createState() => _ReportsState();
 }
@@ -113,7 +116,7 @@ class _ReportsState extends State<Reports> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          "Abraham Udele ",
+                         widget.name,
                           maxLines: 1,
                           style: TextStyle(
                               color: Colors.black,
@@ -121,7 +124,7 @@ class _ReportsState extends State<Reports> {
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          "Address of Store or Something related ",
+                          "(Store Admin)",
                           maxLines: 2,
                           style: TextStyle(
                               color: Colors.black,
@@ -129,7 +132,7 @@ class _ReportsState extends State<Reports> {
                               fontWeight: FontWeight.w300),
                         ),
                         Text(
-                          "Others ",
+                          " ",
                           maxLines: 1,
                           style: TextStyle(
                               color: Colors.black,
@@ -187,7 +190,7 @@ class _ReportsState extends State<Reports> {
                               children: <Widget>[
                                 Icon(
                                   Icons.today,
-                                  size: 30,
+                                  size: 50,
                                   color: Colors.green,
                                 ),
                                 Text(
@@ -227,7 +230,7 @@ class _ReportsState extends State<Reports> {
                               children: <Widget>[
                                 Icon(
                                   Icons.date_range,
-                                  size: 30,
+                                  size: 50,
                                   color: Colors.brown[600],
                                 ),
                                 Text(
@@ -274,7 +277,7 @@ class _ReportsState extends State<Reports> {
                               children: <Widget>[
                                 Icon(
                                   Icons.calendar_view_day,
-                                  size: 30,
+                                  size: 50,
                                   color: Colors.blueAccent,
                                 ),
                                 Text(
@@ -311,7 +314,7 @@ class _ReportsState extends State<Reports> {
                               children: <Widget>[
                                 Icon(
                                   Icons.assignment,
-                                  size: 25,
+                                  size: 45,
                                   color: Colors.deepOrangeAccent[300],
                                 ),
                                 Text(

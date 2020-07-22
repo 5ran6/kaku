@@ -8,7 +8,9 @@ import 'manage_employee.dart';
 import 'manage_stock_menu.dart';
 
 class Vendor extends StatelessWidget {
-  String token;
+  String token, name;
+
+  Vendor({this.name});
 
   void _goto(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -62,7 +64,7 @@ class Vendor extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          "Store Owner ",
+                          name,
                           maxLines: 1,
                           style: TextStyle(
                               color: Colors.black,
@@ -70,7 +72,7 @@ class Vendor extends StatelessWidget {
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          "Address of Store not available ",
+                          "(Store Admin)",
                           maxLines: 2,
                           style: TextStyle(
                               color: Colors.black,
@@ -78,7 +80,7 @@ class Vendor extends StatelessWidget {
                               fontWeight: FontWeight.w300),
                         ),
                         Text(
-                          "Others ",
+                          " ",
                           maxLines: 1,
                           style: TextStyle(
                               color: Colors.black,
@@ -135,7 +137,7 @@ class Vendor extends StatelessWidget {
                               children: <Widget>[
                                 Icon(
                                   Icons.add_shopping_cart,
-                                  size: 30,
+                                  size: 50,
                                   color: Colors.green,
                                 ),
                                 Text(
@@ -174,7 +176,7 @@ class Vendor extends StatelessWidget {
                               children: <Widget>[
                                 Icon(
                                   Icons.store,
-                                  size: 30,
+                                  size: 50,
                                   color: Colors.red[300],
                                 ),
                                 Text(
@@ -223,7 +225,7 @@ class Vendor extends StatelessWidget {
                               children: <Widget>[
                                 Icon(
                                   Icons.person_outline,
-                                  size: 30,
+                                  size: 50,
                                   color: Colors.black,
                                 ),
                                 Text(
@@ -260,7 +262,7 @@ class Vendor extends StatelessWidget {
                               children: <Widget>[
                                 Icon(
                                   Icons.chat,
-                                  size: 30,
+                                  size: 50,
                                   color: Colors.blue[300],
                                 ),
                                 Text(

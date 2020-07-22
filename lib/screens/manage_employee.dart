@@ -113,7 +113,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                               );
                         },
                         trailing: Icon(
-                          widget.list[index]['status'] == "active"
+                          widget.list[index]['is_active'] == "1"
                               ? Icons.done_outline
                               : Icons.warning,
                         ),
@@ -212,7 +212,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        if (status == 'active') {
+        if (status == '1') {
           return alert;
         } else {
           return alert2;
