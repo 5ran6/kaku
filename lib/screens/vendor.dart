@@ -5,18 +5,26 @@ import 'package:kaku/screens/add_product_line_menu.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'manage_employee.dart';
+import 'manage_stock_menu.dart';
 
 class Vendor extends StatelessWidget {
   String token;
 
   void _goto(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    token =  prefs.get("token").toString();
+    token = prefs.get("token").toString();
 
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => ProductsList(
+      builder: (context) => ProductsList(),
+    ));
+  }
 
-      ),
+  void _gotoStock(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.get("token").toString();
+
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => StockManageList(),
     ));
   }
 
@@ -157,7 +165,7 @@ class Vendor extends StatelessWidget {
                         child: InkWell(
                           borderRadius: BorderRadius.circular(10.0),
                           onTap: () {
-                            _goto(context);
+                            _gotoStock(context);
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(28.0),
@@ -205,9 +213,7 @@ class Vendor extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10.0),
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ManageEmployee(
-                                token
-                              ),
+                              builder: (context) => ManageEmployee(),
                             ));
                           },
                           child: Padding(

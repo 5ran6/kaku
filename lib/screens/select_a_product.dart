@@ -23,7 +23,7 @@ class _ProductsListState extends State<ProductsListToSelect> {
   @override
   void initState() {
     super.initState();
-    getProducts();
+  //  getProducts();
   }
 
   Future getProducts() async {
