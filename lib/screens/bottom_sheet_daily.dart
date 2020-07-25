@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kaku/screens/specific_report.dart';
 import 'package:kaku/widgets/animated_numeric_text.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
@@ -37,6 +38,7 @@ class bottomSheetDaily {
 
     // 2020-07-06
     void getReportToday(String date) async {
+      Toast.show("Fetching records...", context);
 //YYYY-MM-DD
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
@@ -65,9 +67,12 @@ class bottomSheetDaily {
               .formatMoney(json.decode(response.body)['date_expenses']);
           paymentsAmountToday = formatStuff
               .formatMoney(json.decode(response.body)['payments_amount_total']);
-          setState(() {
-            visible = true;
-          });
+
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) =>
+                SpecificReport(null, null, null, null, null),
+          ));
+
         } on FormatException catch (exception) {
           print('Exception: ' + exception.toString());
           print('Error: ' + response.body);

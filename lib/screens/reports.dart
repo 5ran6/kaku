@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:kaku/screens/bottom_sheet_daily.dart';
 import 'package:kaku/screens/bottom_sheet_monthly.dart';
 import 'package:kaku/screens/bottom_sheet_weekly.dart';
@@ -40,7 +41,10 @@ class _ReportsState extends State<Reports> {
     print(formatStuff.formatDate('today'));
     getReportToday(formatStuff.formatDate('today'));
   }
-
+  String getDate() {
+    var now = new DateTime.now();
+    return new DateFormat('yyyy-MM-dd').format(now);
+  }
   void getReportToday(String date) async {
 //YYYY-MM-DD
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -181,7 +185,7 @@ class _ReportsState extends State<Reports> {
                           borderRadius: BorderRadius.circular(10.0),
                           onTap: () {
                             bSheetDaily.settingModalBottomSheet(
-                                context, "2020-07-01", setState);
+                                context, getDate(), setState);
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(28.0),

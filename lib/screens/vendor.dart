@@ -80,7 +80,7 @@ class Vendor extends StatelessWidget {
                               fontWeight: FontWeight.w300),
                         ),
                         Text(
-                          " ",
+                          "",
                           maxLines: 1,
                           style: TextStyle(
                               color: Colors.black,
@@ -137,7 +137,7 @@ class Vendor extends StatelessWidget {
                               children: <Widget>[
                                 Icon(
                                   Icons.add_shopping_cart,
-                                  size: 50,
+                                  size: 30,
                                   color: Colors.green,
                                 ),
                                 Text(
@@ -176,7 +176,7 @@ class Vendor extends StatelessWidget {
                               children: <Widget>[
                                 Icon(
                                   Icons.store,
-                                  size: 50,
+                                  size: 30,
                                   color: Colors.red[300],
                                 ),
                                 Text(
@@ -225,7 +225,7 @@ class Vendor extends StatelessWidget {
                               children: <Widget>[
                                 Icon(
                                   Icons.person_outline,
-                                  size: 50,
+                                  size: 30,
                                   color: Colors.black,
                                 ),
                                 Text(
@@ -262,7 +262,7 @@ class Vendor extends StatelessWidget {
                               children: <Widget>[
                                 Icon(
                                   Icons.chat,
-                                  size: 50,
+                                  size: 30,
                                   color: Colors.blue[300],
                                 ),
                                 Text(

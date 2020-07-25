@@ -113,7 +113,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                               );
                         },
                         trailing: Icon(
-                          widget.list[index]['is_active'] == "1"
+                          widget.list[index]['user']['is_active'] == "1"
                               ? Icons.done_outline
                               : Icons.warning,
                         ),

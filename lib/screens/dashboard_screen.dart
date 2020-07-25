@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:kaku/screens/add_stock_menu.dart';
 import 'package:kaku/screens/invoices.dart';
 import 'package:kaku/screens/reports.dart';
+import 'package:kaku/screens/specific_report.dart';
 import 'package:kaku/screens/vendor.dart';
 import 'package:kaku/widgets/make_sale.dart';
 import 'package:permissions_plugin/permissions_plugin.dart';
@@ -343,10 +344,6 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  void printer() {
-    print('HII');
-  }
-
   Widget _buildDashboardGrid() {
     const step = 0.04;
     const aniInterval = 0.75;
@@ -458,7 +455,13 @@ class _DashboardScreenState extends State<DashboardScreen>
           icon: Icon(Icons.exit_to_app, size: 20),
           label: 'Exit', //exit
           interval: Interval(step * 2, aniInterval + step * 2),
-          onPressed: () => {exiting()},
+          onPressed: () => {
+            //  exiting()
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) =>
+                  SpecificReport(null, null, null, null, null),
+            ))
+          },
         ),
       ],
     );
