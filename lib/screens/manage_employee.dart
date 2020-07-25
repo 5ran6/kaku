@@ -101,16 +101,12 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                           //actions with dialogs
                           showAlertDialog(
                               context,
-                              widget.token,
                               widget.list[index]['id'].toString(),
                               widget.list[index]['phone'],
                               widget.list[index]['lastname'] +
                                   " " +
                                   widget.list[index]['firstname'],
-                              widget.list[index]['status']
-                              //   "active"
-
-                              );
+                              widget.list[index]['user']['is_active']);
                         },
                         trailing: Icon(
                           widget.list[index]['user']['is_active'] == "1"
@@ -135,8 +131,8 @@ class _ManageEmployeeState extends State<ManageEmployee> {
     );
   }
 
-  showAlertDialog(BuildContext context, String token, String id,
-      String phoneNumber, String name, String status) {
+  showAlertDialog(BuildContext context, String id, String phoneNumber,
+      String name, String status) {
     // set up the buttons
     Widget suspendEmployee = FlatButton(
       child: Text("Suspend Employee"),
@@ -144,15 +140,23 @@ class _ManageEmployeeState extends State<ManageEmployee> {
         //send just picked to server
         Map data = {'id': id};
         Toast.show("Processing..", context);
-        await http.post(Constants.domain + "vendorDeactivateEmployee",
+        SharedPreferences sharedPreferences =
+            await SharedPreferences.getInstance();
+        String token = await sharedPreferences.get("token");
+
+        var response = await http.post(
+            Constants.domain + "vendorDeactivateEmployee",
             body: data,
             headers: {
               'Authorization': 'Bearer $token',
             });
-        //pop
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => ManageEmployee(),
-        ));
+        print('Response = ' + response.body.toString());
+        Navigator.pop(context);
+        setState(() {});
+//        //pop
+//        Navigator.of(context).pushReplacement(MaterialPageRoute(
+//          builder: (context) => ManageEmployee(),
+//        ));
       },
     ); // set up the buttons
     Widget unsuspendEmployee = FlatButton(
@@ -160,16 +164,20 @@ class _ManageEmployeeState extends State<ManageEmployee> {
       onPressed: () async {
         Map data = {'id': id};
         Toast.show("Processing..", context);
+        SharedPreferences sharedPreferences =
+            await SharedPreferences.getInstance();
+        String token = await sharedPreferences.get("token");
 
-        await http.post(Constants.domain + "vendorActivateEmployee",
+        var response = await http.post(
+            Constants.domain + "vendorActivateEmployee",
             body: data,
             headers: {
               'Authorization': 'Bearer $token',
             });
         //pop
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => ManageEmployee(),
-        ));
+        print('Response = ' + response.body.toString());
+        Navigator.pop(context);
+        setState(() {});
       },
     ); // set up the buttons
 
@@ -212,6 +220,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        print("Status: $status");
         if (status == '1') {
           return alert;
         } else {

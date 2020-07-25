@@ -184,8 +184,9 @@ class _DashboardScreenState extends State<DashboardScreen>
         print('success: ' + response.body);
         done = true;
         //parse json
-        i = double.parse(jsonData['data']['payments_count'].toString());
-      } on FormatException catch (exception) {
+setState(() {
+  i = double.parse(jsonData['data']['payments_count'].toString());
+});   } on FormatException catch (exception) {
         print('Exception: ' + exception.toString());
         print('Error' + response.body);
         done = false;

@@ -16,7 +16,7 @@ class bottomSheetDaily {
     DateTime selectedDate = DateTime.now();
     String cashAtHand = '0';
     String paymentCount = '0';
-    String payment = 'Payments for this day';
+    List payment = [];
 
     String netProfitToday = '0';
     final theme = Theme.of(context);
@@ -55,22 +55,17 @@ class bottomSheetDaily {
           print('success: ' + response.body);
 
           payment =
-              formatStuff.formatMoney(json.decode(response.body)['payments']);
-          paymentCount = formatStuff
-              .formatMoney(json.decode(response.body)['payments_count']);
+               json.decode(response.body)['payments'];
+          paymentCount = json.decode(response.body)['payments_count'];
 
-          cashAtHand = formatStuff
-              .formatMoney(json.decode(response.body)['cash_at_hand']);
-          netProfitToday = formatStuff
-              .formatMoney(json.decode(response.body)['date_net_profit']);
-          expensesToday = formatStuff
-              .formatMoney(json.decode(response.body)['date_expenses']);
-          paymentsAmountToday = formatStuff
-              .formatMoney(json.decode(response.body)['payments_amount_total']);
+          cashAtHand = json.decode(response.body)['cash_at_hand'];
+          netProfitToday = json.decode(response.body)['date_net_profit'];
+          expensesToday = json.decode(response.body)['date_expenses'];
+          paymentsAmountToday = json.decode(response.body)['payments_amount_total'];
 
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) =>
-                SpecificReport(null, null, null, null, null),
+                SpecificReport('As at $data', paymentCount, paymentsAmountToday, cashAtHand, payment),
           ));
 
         } on FormatException catch (exception) {
@@ -148,120 +143,7 @@ class bottomSheetDaily {
                       splashColor: Colors.white.withOpacity(0.5),
                     ),
                   ),
-                  visible
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-/*
- payments, payments_count, payments_amount_total, year_expenses,
-year_net_proft, cash_at_hand
 
-* */
-
-                                Icon(
-                                  Icons.payment,
-                                  color: Colors.green[700],
-                                ),
-                                Text(
-                                  payment.toUpperCase(),
-                                  style: theme.textTheme.display3.copyWith(
-                                    foreground: Paint()
-                                      ..shader = linearGradient,
-                                  ),
-                                )
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-/*
- payments, payments_count, payments_amount_total, year_expenses,
-year_net_proft, cash_at_hand
-
-* */
-
-                                Icon(
-                                  Icons.format_list_numbered_rtl,
-                                ),
-                                Text("Number of Payments: " +
-                                    formatStuff.formatMoney(paymentCount)),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-/*
- payments, payments_count, payments_amount_total, year_expenses,
-year_net_proft, cash_at_hand
-
-* */
-
-                                Icon(
-                                  Icons.payment,
-                                  color: Colors.green[400],
-                                ),
-                                Text("Total Payment Amount: ₦" +
-                                    formatStuff
-                                        .formatMoney(paymentsAmountToday)),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-/*
- payments, payments_count, payments_amount_total, year_expenses,
-year_net_proft, cash_at_hand
-
-* */
-
-                                Icon(
-                                  Icons.payment,
-                                  color: Colors.orange[800],
-                                ),
-                                Text("Total Expenses Amount: ₦" +
-                                    formatStuff.formatMoney(expensesToday)),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-/*
- payments, payments_count, payments_amount_total, year_expenses,
-year_net_proft, cash_at_hand
-
-**/
-
-                                Icon(
-                                  Icons.payment,
-                                  color: Colors.orange[800],
-                                ),
-                                Text("Net Profit Amount: ₦" +
-                                    formatStuff.formatMoney(netProfitToday)),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-/*
- payments, payments_count, payments_amount_total, year_expenses,
-year_net_proft, cash_at_hand
-
-* */
-
-                                Icon(
-                                  Icons.payment,
-                                  color: Colors.black,
-                                ),
-                                Text("Cash at Hand: ₦" +
-                                    formatStuff.formatMoney(cashAtHand)),
-                              ],
-                            ),
-                          ],
-                        )
-                      : SizedBox(),
                 ],
               ),
             ),

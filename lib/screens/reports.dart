@@ -60,14 +60,10 @@ class _ReportsState extends State<Reports> {
       try {
         print('success: ' + response.body);
         setState(() {
-          cashAtHand = formatStuff
-              .formatMoney(json.decode(response.body)['cash_at_hand']);
-          netProfitToday = formatStuff
-              .formatMoney(json.decode(response.body)['date_net_profit']);
-          expensesToday = formatStuff
-              .formatMoney(json.decode(response.body)['date_expenses']);
-          paymentsAmountToday = formatStuff
-              .formatMoney(json.decode(response.body)['payments_amount_total']);
+          cashAtHand =  json.decode(response.body)['data']['cash_at_hand'].toString();
+          netProfitToday =  json.decode(response.body)['data']['date_net_profit'].toString();
+          expensesToday = json.decode(response.body)['data']['date_expenses'].toString();
+          paymentsAmountToday =  json.decode(response.body)['data']['payments_amount_total'].toString();
         });
       } on FormatException catch (exception) {
         print('Exception: ' + exception.toString());
