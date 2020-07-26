@@ -630,7 +630,7 @@ class _DashboardScreenState extends State<DashboardScreen>
 
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => SpecificReport(
-              'As at $date',
+              'Invoices Today',
               paymentCount,
               paymentsAmountToday.toString(),
               cashAtHand.toString(),
