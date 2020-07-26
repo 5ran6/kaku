@@ -14,7 +14,8 @@ import '../constants.dart';
 import 'package:http/http.dart' as http;
 
 class Reports extends StatefulWidget {
- String name;
+  String name;
+
   Reports({this.name});
 
   @override
@@ -41,10 +42,12 @@ class _ReportsState extends State<Reports> {
     print(formatStuff.formatDate('today'));
     getReportToday(formatStuff.formatDate('today'));
   }
+
   String getDate() {
     var now = new DateTime.now();
     return new DateFormat('yyyy-MM-dd').format(now);
   }
+
   void getReportToday(String date) async {
 //YYYY-MM-DD
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -59,12 +62,16 @@ class _ReportsState extends State<Reports> {
     if (response.statusCode == 200 || response.statusCode == 201) {
       try {
         print('success: ' + response.body);
-        setState(() {
-          cashAtHand =  json.decode(response.body)['data']['cash_at_hand'].toString();
-          netProfitToday =  json.decode(response.body)['data']['date_net_profit'].toString();
-          expensesToday = json.decode(response.body)['data']['date_expenses'].toString();
-          paymentsAmountToday =  json.decode(response.body)['data']['payments_amount_total'].toString();
-        });
+        cashAtHand =
+            json.decode(response.body)['data']['cash_at_hand'].toString();
+        netProfitToday =
+            json.decode(response.body)['data']['date_net_profit'].toString();
+        expensesToday =
+            json.decode(response.body)['data']['date_expenses'].toString();
+        paymentsAmountToday = json
+            .decode(response.body)['data']['payments_amount_total']
+            .toString();
+        setState(() {});
       } on FormatException catch (exception) {
         print('Exception: ' + exception.toString());
         print('Error' + response.body);
@@ -116,7 +123,7 @@ class _ReportsState extends State<Reports> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                         widget.name,
+                          widget.name,
                           maxLines: 1,
                           style: TextStyle(
                               color: Colors.black,

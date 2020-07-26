@@ -184,9 +184,10 @@ class _DashboardScreenState extends State<DashboardScreen>
         print('success: ' + response.body);
         done = true;
         //parse json
-setState(() {
-  i = double.parse(jsonData['data']['payments_count'].toString());
-});   } on FormatException catch (exception) {
+        setState(() {
+          i = double.parse(jsonData['data']['payments_count'].toString());
+        });
+      } on FormatException catch (exception) {
         print('Exception: ' + exception.toString());
         print('Error' + response.body);
         done = false;
@@ -320,7 +321,7 @@ setState(() {
                 ),
               ],
             ),
-            Text('Items Sold Today',
+            Text('Item(s) Sold Today',
                 style: TextStyle(color: Colors.green, fontSize: 15)),
           ],
         ),
@@ -457,11 +458,11 @@ setState(() {
           label: 'Exit', //exit
           interval: Interval(step * 2, aniInterval + step * 2),
           onPressed: () => {
-            //  exiting()
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) =>
-                  SpecificReport(null, null, null, null, null),
-            ))
+            exiting()
+//            Navigator.of(context).push(MaterialPageRoute(
+//              builder: (context) =>
+//                  SpecificReport(null, null, null, null, null, null),
+//            ))
           },
         ),
       ],

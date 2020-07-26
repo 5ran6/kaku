@@ -15,10 +15,13 @@ class SpecificReport extends StatefulWidget {
   String payment_count;
   String total_amount;
   String cash_at_hand;
+  String expenses;
+  String date_net_profit;
+
   List payments = []; // goes inner top
 
   SpecificReport(this.title, this.payment_count, this.total_amount,
-      this.cash_at_hand, this.payments);
+      this.cash_at_hand, this.payments, this.expenses, this.date_net_profit);
 
   @override
   _SpecificReportState createState() => _SpecificReportState();
@@ -43,6 +46,7 @@ class _SpecificReportState extends State<SpecificReport>
   @override
   initState() {
     // i = double.parse(widget.payment_count);
+//    print(widget.payments[0].toString());
 
     _animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500))
@@ -138,34 +142,40 @@ class _SpecificReportState extends State<SpecificReport>
                       indent: 20,
                       endIndent: 20,
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          "Samsung Galaxy S10",
-                          maxLines: 1,
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          "Invoice Number: 00$index",
-                          maxLines: 1,
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w300),
-                        ),
-                        Text(
-                          "Customer: Abraham Udele",
-                          maxLines: 1,
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w100),
-                        ),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.all(1.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            widget.payments[index]["receipt_no"],
+                            maxLines: 1,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            "Invoice Number: " +
+                                widget.payments[index]["invoice_no"],
+                            maxLines: 1,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 12,
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.w300),
+                          ),
+                          Text(
+                            "Payment Method: " +
+                                widget.payments[index]["payment_method"],
+                            maxLines: 1,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w100),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -216,7 +226,7 @@ class _SpecificReportState extends State<SpecificReport>
                             fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        "$index/12/2020 ",
+                        widget.payments[index]["created_at"].split('T')[0],
                         maxLines: 1,
                         style: TextStyle(
                             color: Colors.black87,
@@ -239,7 +249,7 @@ class _SpecificReportState extends State<SpecificReport>
                     mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
                       Text(
-                        "Total Price:",
+                        "Total Price: ",
                         maxLines: 1,
                         style: TextStyle(
                             color: Colors.black,
@@ -247,7 +257,7 @@ class _SpecificReportState extends State<SpecificReport>
                             fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        "N207,090.00 ",
+                        "₦ " + widget.payments[index]["amount_paid"],
                         maxLines: 1,
                         style: TextStyle(
                             color: Colors.black87,
@@ -270,7 +280,7 @@ class _SpecificReportState extends State<SpecificReport>
                     mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
                       Text(
-                        "Sold by:",
+                        "Sold by (ID):",
                         maxLines: 1,
                         style: TextStyle(
                             color: Colors.black,
@@ -278,7 +288,7 @@ class _SpecificReportState extends State<SpecificReport>
                             fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        "Abraham Udele",
+                        widget.payments[index]["vendor_id"],
                         maxLines: 1,
                         style: TextStyle(
                             color: Colors.black87,
@@ -339,33 +349,55 @@ class _SpecificReportState extends State<SpecificReport>
       appBar: AppBar(
         backgroundColor: Colors.deepOrange,
         elevation: 0,
+        actions: <Widget>[
+          Icon(
+            Icons.assignment,
+          ),
+        ],
         title: Text(
             //widget.title
-            "Title"),
+            widget.title),
       ),
       body: SafeArea(
         child: Column(
           children: <Widget>[
             Container(
               // width: double.infinity,
-              height: 100,
+              height: 160,
               color: Colors.deepOrange,
               alignment: Alignment.topCenter,
               child: Padding(
-                padding: const EdgeInsets.all(18.0),
+                padding: const EdgeInsets.all(1.0),
                 child: Align(
                   alignment: Alignment.topCenter,
                   child: Column(
                     children: <Widget>[
                       Text(
-                        "12 ",
+                        widget.payment_count,
                         style: TextStyle(fontSize: 30),
-                        //TODO: number of online drivers gotten from firebase
                       ),
                       Text(
-                        "Items sold",
-                        style: TextStyle(fontSize: 15),
-                        //TODO: number of online drivers gotten from firebase
+                        "Item(s) sold\n",
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.grey[800],
+                            fontStyle: FontStyle.italic),
+                      ),
+                      Text(
+                        "Amount Paid: ₦ " + widget.total_amount,
+                        style: TextStyle(fontSize: 13),
+                      ),
+                      Text(
+                        "Expenses: ₦ " + widget.expenses,
+                        style: TextStyle(fontSize: 13),
+                      ),
+                      Text(
+                        "Net Profit: ₦ " + widget.date_net_profit,
+                        style: TextStyle(fontSize: 13),
+                      ),
+                      Text(
+                        "Cash At Hand: ₦ " + widget.cash_at_hand,
+                        style: TextStyle(fontSize: 13),
                       ),
                     ],
                   ),
@@ -377,7 +409,7 @@ class _SpecificReportState extends State<SpecificReport>
                 //height: MediaQuery.of(context).size.height - 150.0,
                 color: Colors.deepOrange,
                 child: ListView.builder(
-                    itemCount: 100,
+                    itemCount: int.parse(widget.payment_count),
                     itemBuilder: (context, index) {
                       return SimpleFoldingCell(
                           frontWidget: _buildFrontWidget(index),

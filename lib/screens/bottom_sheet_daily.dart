@@ -3,11 +3,9 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kaku/screens/specific_report.dart';
-import 'package:kaku/widgets/animated_numeric_text.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 import 'package:http/http.dart' as http;
-import 'package:kaku/services/formatStuff.dart';
 
 import '../constants.dart';
 
@@ -16,13 +14,13 @@ class bottomSheetDaily {
     DateTime selectedDate = DateTime.now();
     String cashAtHand = '0';
     String paymentCount = '0';
+    String paymentsAmountToday = '0';
     List payment = [];
 
     String netProfitToday = '0';
     final theme = Theme.of(context);
 
     String expensesToday = '0';
-    String paymentsAmountToday = '0';
     String date = passed;
     final primaryColor =
         Colors.primaries.where((c) => c == theme.primaryColor).first;
@@ -54,20 +52,32 @@ class bottomSheetDaily {
         try {
           print('success: ' + response.body);
 
-          payment =
-               json.decode(response.body)['payments'];
-          paymentCount = json.decode(response.body)['payments_count'];
+          payment = json.decode(response.body)['data']['payments'];
+          paymentCount = json.decode(response.body)['data']['payments_count'].toString();
 
-          cashAtHand = json.decode(response.body)['cash_at_hand'];
-          netProfitToday = json.decode(response.body)['date_net_profit'];
-          expensesToday = json.decode(response.body)['date_expenses'];
-          paymentsAmountToday = json.decode(response.body)['payments_amount_total'];
+          cashAtHand = json.decode(response.body)['data']['cash_at_hand'].toString();
+          netProfitToday =
+              json.decode(response.body)['data']['date_net_profit'].toString();
+          expensesToday = json.decode(response.body)['data']['date_expenses'].toString();
+          paymentsAmountToday =
+              json.decode(response.body)['data']['payments_amount_total'].toString();
+          print('Values: ' +
+              paymentCount  +
+              ' ' +
+              paymentsAmountToday.toString() +
+              ' ' +
+              cashAtHand.toString() +
+              ' ' +
+              payment.toString());
 
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) =>
-                SpecificReport('As at $data', paymentCount, paymentsAmountToday, cashAtHand, payment),
+            builder: (context) => SpecificReport(
+                'As at $date',
+                paymentCount,
+                paymentsAmountToday.toString(),
+                cashAtHand.toString(),
+                payment, expensesToday, netProfitToday),
           ));
-
         } on FormatException catch (exception) {
           print('Exception: ' + exception.toString());
           print('Error: ' + response.body);
@@ -75,7 +85,15 @@ class bottomSheetDaily {
         }
       } else {
         try {
-          Toast.show(json.decode(response.body)['errors']['data'].toString().substring(1, json.decode(response.body)['errors']['data'].toString().length-1), context);
+          Toast.show(
+              json.decode(response.body)['errors']['data'].toString().substring(
+                  1,
+                  json
+                          .decode(response.body)['errors']['data']
+                          .toString()
+                          .length -
+                      1),
+              context);
           print('failed: ' + response.body);
         } on FormatException catch (exception) {
           print('Exception: ' + exception.toString());
@@ -143,7 +161,6 @@ class bottomSheetDaily {
                       splashColor: Colors.white.withOpacity(0.5),
                     ),
                   ),
-
                 ],
               ),
             ),
