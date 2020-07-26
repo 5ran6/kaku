@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kaku/screens/specific_report.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 import 'package:http/http.dart' as http;
@@ -16,6 +17,8 @@ class bottomSheetRange {
     String netProfitToday = '0';
     String end;
     String start;
+    List payment = [];
+    String paymentCount = '0';
 
     String expensesToday = '0';
     String paymentsAmountToday = '0';
@@ -23,28 +26,46 @@ class bottomSheetRange {
 // 2020-07-06
     void getReportRange(String start_date, String end_date) async {
 //YYYY-MM-DD
+      Toast.show("Fetching records...", context);
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
       String token = await sharedPreferences.get("token");
       Map data = {'date_from': start_date, 'date_to': end_date};
 
       var response = await http
-          .post(Constants.domain + "daterangeSalesReport", body: data, headers: {
+          .post(Constants.domain + "dateRangeSalesReport", body: data, headers: {
         'Authorization': 'Bearer $token',
       });
       print('Status Code = ' + response.statusCode.toString());
       if (response.statusCode == 200 || response.statusCode == 201) {
         try {
           print('success: ' + response.body);
+          payment = json.decode(response.body)['data']['payments'];
+          paymentCount = json.decode(response.body)['data']['payments_count'].toString();
 
-          cashAtHand = formatStuff
-              .formatMoney(json.decode(response.body)['cash_at_hand']);
-          netProfitToday = formatStuff
-              .formatMoney(json.decode(response.body)['date_net_profit']);
-          expensesToday = formatStuff
-              .formatMoney(json.decode(response.body)['date_expenses']);
-          paymentsAmountToday = formatStuff
-              .formatMoney(json.decode(response.body)['payments_amount_total']);
+          cashAtHand = json.decode(response.body)['data']['cash_at_hand'].toString();
+          netProfitToday =
+              json.decode(response.body)['data']['date_net_profit'].toString();
+          expensesToday = json.decode(response.body)['data']['date_expenses'].toString();
+          paymentsAmountToday =
+              json.decode(response.body)['data']['payments_amount_total'].toString();
+          print('Values: ' +
+              paymentCount  +
+              ' ' +
+              paymentsAmountToday.toString() +
+              ' ' +
+              cashAtHand.toString() +
+              ' ' +
+              payment.toString());
+
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => SpecificReport(
+                '$start_date to $end_date',
+                paymentCount,
+                paymentsAmountToday.toString(),
+                cashAtHand.toString(),
+                payment, expensesToday, netProfitToday),
+          ));
         } on FormatException catch (exception) {
           print('Exception: ' + exception.toString());
           print('Error' + response.body);
@@ -77,7 +98,7 @@ class bottomSheetRange {
                       children: <Widget>[
                         Text(
                           date,
-                          style: TextStyle(fontSize: 25),
+                          style: TextStyle(fontSize: 20),
                         ),
                         SizedBox(
                           height: 20.0,
