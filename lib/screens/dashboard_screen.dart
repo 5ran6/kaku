@@ -148,6 +148,12 @@ class _DashboardScreenState extends State<DashboardScreen>
   void didChangeDependencies() {
     super.didChangeDependencies();
     routeObserver.subscribe(this, ModalRoute.of(context));
+    if (counter >= 3) {
+      getCount();
+      counter = 0;
+    }
+    counter++;
+    print(counter.toString());
   }
 
   @override
@@ -584,6 +590,7 @@ class _DashboardScreenState extends State<DashboardScreen>
 //              },
 //            ));
 //  }
+  int counter = 0;
 
   @override
   Widget build(BuildContext context) {
