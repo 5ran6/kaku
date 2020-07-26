@@ -424,9 +424,7 @@ class _DashboardScreenState extends State<DashboardScreen>
           icon: Icon(Icons.receipt, size: 20),
           label: 'Invoices', //to reprint invoices by transaction ID
           interval: Interval(0, aniInterval),
-          onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => FancyFab(),
-          )),
+          onPressed: () => getReportToday(getDate()),
         ),
         _buildButton(
           icon: Icon(FontAwesomeIcons.info, size: 20),
@@ -591,6 +589,75 @@ class _DashboardScreenState extends State<DashboardScreen>
 //            ));
 //  }
   int counter = 0;
+
+  void getReportToday(String date) async {
+    Toast.show("Fetching records...", context);
+//YYYY-MM-DD
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String token = await sharedPreferences.get("token");
+    Map data = {'date': date.trim()};
+
+    var response = await http
+        .post(Constants.domain + "perDaySalesReport", body: data, headers: {
+      'Authorization': 'Bearer $token',
+    });
+    print('Status Code = ' + response.statusCode.toString());
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      try {
+        print('success: ' + response.body);
+
+        List payment = json.decode(response.body)['data']['payments'];
+        String paymentCount =
+            json.decode(response.body)['data']['payments_count'].toString();
+
+        String cashAtHand =
+            json.decode(response.body)['data']['cash_at_hand'].toString();
+        String netProfitToday =
+            json.decode(response.body)['data']['date_net_profit'].toString();
+        String expensesToday =
+            json.decode(response.body)['data']['date_expenses'].toString();
+        String paymentsAmountToday = json
+            .decode(response.body)['data']['payments_amount_total']
+            .toString();
+        print('Values: ' +
+            paymentCount +
+            ' ' +
+            paymentsAmountToday.toString() +
+            ' ' +
+            cashAtHand.toString() +
+            ' ' +
+            payment.toString());
+
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => SpecificReport(
+              'As at $date',
+              paymentCount,
+              paymentsAmountToday.toString(),
+              cashAtHand.toString(),
+              payment,
+              expensesToday,
+              netProfitToday),
+        ));
+      } on FormatException catch (exception) {
+        print('Exception: ' + exception.toString());
+        print('Error: ' + response.body);
+        Toast.show("Error while fetching data", context);
+      }
+    } else {
+      try {
+        Toast.show(
+            json.decode(response.body)['errors']['data'].toString().substring(
+                1,
+                json.decode(response.body)['errors']['data'].toString().length -
+                    1),
+            context);
+        print('failed: ' + response.body);
+      } on FormatException catch (exception) {
+        print('Exception: ' + exception.toString());
+        print('Error: ' + response.body);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
