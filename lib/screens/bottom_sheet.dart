@@ -1,8 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'approval.dart';
+import 'make_sales.dart';
+
 class bottomSheet {
   void settingModalBottomSheet(context) {
+    TextEditingController _customersName = new TextEditingController();
+
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -15,6 +20,7 @@ class bottomSheet {
                   new Padding(
                     padding: MediaQuery.of(context).viewInsets,
                     child: TextFormField(
+                      controller: _customersName,
                       onFieldSubmitted: (v) {
                         FocusScope.of(context).requestFocus(FocusNode());
                       },
@@ -22,7 +28,7 @@ class bottomSheet {
                       autofocus: true,
                       style: TextStyle(color: Colors.black),
                       decoration: InputDecoration(
-                          labelText: 'Enter Registration Code',
+                          labelText: 'Customer name (Required)',
                           labelStyle: TextStyle(color: Colors.black54),
                           border: OutlineInputBorder()),
                     ),
@@ -30,9 +36,12 @@ class bottomSheet {
                   Align(
                     alignment: Alignment.bottomRight,
                     child: new FlatButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => SalesQRCode(_customersName.text)));
+                      },
                       child: Text(
-                        "Submit",
+                        "Proceed",
                       ),
                       textColor: Colors.white,
                       color: Colors.indigoAccent,

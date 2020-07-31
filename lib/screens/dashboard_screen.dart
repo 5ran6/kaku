@@ -148,7 +148,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   void didChangeDependencies() {
     super.didChangeDependencies();
     routeObserver.subscribe(this, ModalRoute.of(context));
-    if (counter >= 3) {
+    if (counter >= 6) {
       getCount();
       counter = 0;
     }
