@@ -24,7 +24,8 @@ class bottomSheet {
                       onFieldSubmitted: (v) {
                         FocusScope.of(context).requestFocus(FocusNode());
                       },
-                      textInputAction: TextInputAction.next,
+                      textInputAction: TextInputAction.done,
+                      textCapitalization: TextCapitalization.words,
                       autofocus: true,
                       style: TextStyle(color: Colors.black),
                       decoration: InputDecoration(
@@ -38,7 +39,8 @@ class bottomSheet {
                     child: new FlatButton(
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => SalesQRCode(_customersName.text)));
+                            builder: (context) =>
+                                SalesQRCode(_customersName.text)));
                       },
                       child: Text(
                         "Proceed",

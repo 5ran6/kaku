@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:kaku/screens/add_stock_menu.dart';
+import 'package:kaku/screens/bottom_sheet.dart';
 import 'package:kaku/screens/invoices.dart';
 import 'package:kaku/screens/reports.dart';
 import 'package:kaku/screens/specific_report.dart';
@@ -47,6 +48,7 @@ class _DashboardScreenState extends State<DashboardScreen>
         .then((_) => false);
   }
 
+  final bSheet = bottomSheet();
   bool sign = false;
   double i = 0;
   String token, name;
@@ -408,9 +410,7 @@ class _DashboardScreenState extends State<DashboardScreen>
           icon: Icon(Icons.shopping_basket),
           label: 'Make a Sale', //make a sale
           interval: Interval(step, aniInterval + step),
-          onPressed: () => Navigator.of(context).push(FadePageRoute(
-            builder: (context) => Make_Sale(),
-          )),
+          onPressed: () => bSheet.settingModalBottomSheet(context),
         ),
         _buildButton(
           icon: Icon(FontAwesomeIcons.history),

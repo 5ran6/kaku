@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kaku/models/stocks.dart';
+import 'package:numberpicker/numberpicker.dart';
 import 'package:qrcode/qrcode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -39,8 +41,9 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
   final _formKey = new GlobalKey<FormState>();
   List items = [];
   List names = [];
+  List prices = [];
   bool _isTorchOn = false, captured = false;
-
+  double _currentQuantity = 1.0;
   String _captureText = '';
 
   @override
@@ -53,7 +56,7 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
       setState(() {
         _captureText = data;
         captured = true;
-        addInvoice(_captureText.trim());
+        getStock(_captureText.trim());
         print('I just captured----$data');
         //call approval API here
       });
@@ -83,51 +86,16 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  void addInvoice(String capturedText) async {
-    String stock_id, quantity, name;
-//get StockId from Text
-    stock_id = capturedText.split("stock_id:")[1];
-    //get quantity from Text
-    quantity = capturedText.split("quantity:")[1];
-    //get name from Text
-    name = capturedText.split("name:")[1];
-
-
-    //bottomSheet
-
-
-    //add to list
-    items.add({'stock_id': stock_id, 'quantity': quantity});
-    names.add(name);
-    print('Item size: ' + items.length.toString());
-    print('Items: ' + items.toString());
-
-
-
-    //setState
-    setState(() {
-      captured = false;
-       Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text(
-          "Added to invoice!",
-          style: TextStyle(color: Colors.green),
-        ),
-      ));
-
-    });
-
-  }
-
-  void createInvoice(String barcode) async {
+  void getStock(String barcode) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token');
     print('token: ' + token);
     bool isSuccess = false;
-    Map data = {'barcode': barcode};
-    String stock = "";
+    Map data = {'stock_id': barcode};
+    List stock = [];
     var jsonData;
     var response =
-        await http.post(Constants.domain + "barcode", body: data, headers: {
+        await http.post(Constants.domain + "scanBarcode", body: data, headers: {
       'Authorization': 'Bearer $token',
     });
     print('Status Code = ' + response.statusCode.toString());
@@ -135,44 +103,139 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
     if (response.statusCode == 200 || response.statusCode == 201) {
       try {
         isSuccess = true;
-        jsonData = json.decode(response.body);
-        print('success: ' + response.body);
-        //parse json
+        final Map parsed = json.decode(response.body)['data']['product_stock'];
+//        print('created_at: ' + parsed['created_at']);
 
-        stock = jsonData['data']['product_stocks'].toString();
+        // dialogue
+        _showDialog1(barcode, parsed['vendor_id'], '16',
+            parsed['selling_price']);
       } on FormatException catch (exception) {
         isSuccess = false;
         print('Exception: ' + exception.toString());
         print('Error' + response.body);
+        setState(() {
+          captured = false;
+          Scaffold.of(context).showSnackBar(SnackBar(
+            content: Text(
+              "Something went wrong. Try again",
+              style: TextStyle(color: Colors.redAccent),
+            ),
+          ));
+        });
       }
     } else {
       try {
         isSuccess = false;
         jsonData = json.decode(response.body);
         print('failed: ' + response.body);
+        setState(() {
+          captured = false;
+          Scaffold.of(context).showSnackBar(SnackBar(
+            content: Text(
+              "Something went wrong. Try again",
+              style: TextStyle(color: Colors.redAccent),
+            ),
+          ));
+        });
       } on FormatException catch (exception) {
         isSuccess = false;
         print('Exception: ' + exception.toString());
         print('Error' + response.body);
+        setState(() {
+          captured = false;
+          Scaffold.of(context).showSnackBar(SnackBar(
+            content: Text(
+              "Something went wrong. Try again",
+              style: TextStyle(color: Colors.redAccent),
+            ),
+          ));
+        });
       }
     }
+  }
+
+//  void _showDialog(String barcode, String name, String quantity) {
+//    // flutter defined function
+//    showDialog(
+//      context: context,
+//      builder: (BuildContext context) {
+//        // return object of type Dialog
+//        return AlertDialog(
+//          title: new Text("Out of $quantity in Stock"),
+//          content: new Text("Alert Dialog body"),
+//          actions: <Widget>[
+//            // usually buttons at the bottom of the dialog
+//            new FlatButton(
+//              child: new Text("Close"),
+//              onPressed: () {
+//                Toast.show("Cancelled!", context);
+//                Navigator.of(context).pop();
+//              },
+//            ),
+//            new FlatButton(
+//              child: new Text("Add"),
+//              onPressed: () {
+//            //    addInvoice(barcode, quantity, name);
+//              },
+//            ),
+//          ],
+//        );
+//      },
+//    );
+//  }
+
+  void _showDialog1(
+      String barcode, String name, String quantity, String price) {
+    showDialog<int>(
+        context: context,
+        builder: (BuildContext context) {
+          return new NumberPickerDialog.integer(
+            minValue: 1,
+            maxValue: int.parse(quantity),
+            title: new Text("Select the quantity"),
+            initialIntegerValue: 1,
+          );
+        }).then((int value) {
+      if (value != null) {
+        addInvoice(barcode, quantity, name, price);
+        Navigator.pop(context);
+
+//        setState(() => _currentQuantity = value);
+      }
+    });
+  }
+
+  void addInvoice(
+      String stock_id, String quantity, String name, String price) async {
+    //bottomSheet
+
+    //add to list
+    items.add({'stock_id': stock_id, 'quantity': quantity});
+    names.add(name);
+    prices.add(price);
+    print('Item size: ' + items.length.toString());
+    print('Items: ' + items.toString());
+    print('Names: ' + names.toString());
+    print('Prices: ' + prices.toString());
+
+    //setState
     setState(() {
       captured = false;
-
-      isSuccess
-          ? Scaffold.of(context).showSnackBar(SnackBar(
-              content: Text(
-                "Success! Remaining $stock items",
-                style: TextStyle(color: Colors.green),
-              ),
-            ))
-          : Scaffold.of(context).showSnackBar(SnackBar(
-              content: Text(
-                "Failed! Try again",
-                style: TextStyle(color: Colors.orange),
-              ),
-            ));
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text(
+          "Added to invoice!",
+          style: TextStyle(color: Colors.green),
+        ),
+      ));
     });
+  }
+
+  void createInvoice(List items, List names, List prices) async {
+    //call invoice summary UI.
+
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => null,
+    ));
   }
 
   @override
@@ -189,9 +252,7 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
               floatingActionButton: FloatingActionButton(
                 child: Icon(Icons.done),
                 backgroundColor: Colors.blue,
-                onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => null, //go to sales summary
-                )),
+                onPressed: () => createInvoice(items, names, prices),
               ),
               body: Stack(
                 alignment: Alignment.center,
