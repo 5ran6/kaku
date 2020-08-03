@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:toast/toast.dart';
 
 import '../constants.dart';
+import 'invoice_summary.dart';
 
 //void main() => runApp(QRScan());
 class SalesQRCode extends StatelessWidget {
@@ -40,7 +41,7 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
   AnimationController _animationController;
   final _formKey = new GlobalKey<FormState>();
   List items = [];
-  List names = [];
+  List items_names = [];
   List prices = [];
   bool _isTorchOn = false, captured = false;
   double _currentQuantity = 1.0;
@@ -107,8 +108,8 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
 //        print('created_at: ' + parsed['created_at']);
 
         // dialogue
-        _showDialog1(barcode, parsed['vendor_id'], '16',
-            parsed['selling_price']);
+        _showDialog1(barcode, parsed['product']['name'],
+            parsed['current_quantity'], parsed['selling_price']);
       } on FormatException catch (exception) {
         isSuccess = false;
         print('Exception: ' + exception.toString());
@@ -211,11 +212,11 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
 
     //add to list
     items.add({'stock_id': stock_id, 'quantity': quantity});
-    names.add(name);
+    items_names.add(name);
     prices.add(price);
     print('Item size: ' + items.length.toString());
     print('Items: ' + items.toString());
-    print('Names: ' + names.toString());
+    print('Names: ' + items_names.toString());
     print('Prices: ' + prices.toString());
 
     //setState
@@ -234,7 +235,8 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
     //call invoice summary UI.
 
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => null,
+      builder: (context) => InvoiceSummary(
+          widget.customer_name, items, items_names, prices),
     ));
   }
 
@@ -252,7 +254,7 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
               floatingActionButton: FloatingActionButton(
                 child: Icon(Icons.done),
                 backgroundColor: Colors.blue,
-                onPressed: () => createInvoice(items, names, prices),
+                onPressed: () => createInvoice(items, items_names, prices),
               ),
               body: Stack(
                 alignment: Alignment.center,

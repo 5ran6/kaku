@@ -78,12 +78,18 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token');
     print('token: ' + token);
+    String invoice_no, payment_method, note = '';
+    
     bool isSuccess = false;
-    Map data = {'barcode': barcode};
+    Map data = {
+      'invoice_no': invoice_no,
+      'payment_method': payment_method,
+      'note': note
+    };
     String stock = "";
     var jsonData;
     var response =
-        await http.post(Constants.domain + "barcode", body: data, headers: {
+        await http.post(Constants.domain + "makePayment", body: data, headers: {
       'Authorization': 'Bearer $token',
     });
     print('Status Code = ' + response.statusCode.toString());
@@ -115,19 +121,19 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
     setState(() {
       captured = false;
 
-        isSuccess
-            ? Scaffold.of(context).showSnackBar(SnackBar(
-                content: Text(
-                  "Success! Remaining $stock items",
-                  style: TextStyle(color: Colors.green),
-                ),
-              ))
-            : Scaffold.of(context).showSnackBar(SnackBar(
-                content: Text(
-                  "Failed! Try again",
-                  style: TextStyle(color: Colors.orange),
-                ),
-              ));
+      isSuccess
+          ? Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text(
+                "Success! Remaining $stock items",
+                style: TextStyle(color: Colors.green),
+              ),
+            ))
+          : Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text(
+                "Failed! Try again",
+                style: TextStyle(color: Colors.orange),
+              ),
+            ));
     });
   }
 

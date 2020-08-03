@@ -58,10 +58,10 @@ class _add_product_lineState extends State<add_product_line> {
   String name;
   String productCategory;
   String subCategory;
-  String costPrice;
-  String sellingPrice;
+//  String costPrice;
+//  String sellingPrice;
   String model;
-  String discount;
+//  String discount;
   String expiry;
   DateTime selectedDate = DateTime.now();
 
@@ -100,19 +100,18 @@ class _add_product_lineState extends State<add_product_line> {
       String name,
       String product_category_id,
       String product_subcategory_id,
-      String cost_price,
-      String selling_price,
+
       String model,
-      String discount,
+
       String expiry_date) async {
     Map data = {
       'name': name.trim(),
       'product_category_id': product_category_id.trim(),
       'product_subcategory_id': product_subcategory_id.trim(),
-      'cost_price': cost_price.trim(),
-      'selling_price': selling_price.trim(),
+
+
       'model': model.trim(),
-      'discount': discount.trim(),
+
       'expiry_date': expiry_date.trim()
     };
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -394,7 +393,7 @@ class _add_product_lineState extends State<add_product_line> {
                                   controller: _nameController,
                                   textCapitalization: TextCapitalization.words,
                                   onFieldSubmitted: (v) {
-                                    FocusScope.of(context).requestFocus(focus1);
+                                    FocusScope.of(context).requestFocus(focus5);
                                   },
                                   textInputAction: TextInputAction.next,
                                   validator: _validateProductName,
@@ -467,67 +466,70 @@ class _add_product_lineState extends State<add_product_line> {
                                 ),
                               ),
                               ///////////////drop downs
+//
+//                              Padding(
+//                                padding: const EdgeInsets.all(18.0),
+//                                child: TextFormField(
+//                                  onSaved: (String value) {
+//                                    costPrice = value;
+//                                  },
+//                                  validator: _validateCostPrice,
+//                                  controller: _costPriceController,
+//                                  keyboardType: TextInputType.number,
+//                                  textInputAction: TextInputAction.next,
+//                                  onFieldSubmitted: (v) {
+//                                    FocusScope.of(context).requestFocus(focus4);
+//                                  },
+//                                  focusNode: focus3,
+//                                  //    obscureText: true,
+//                                  style: TextStyle(
+//                                    color: Colors.black,
+//                                  ),
+//                                  decoration: InputDecoration(
+//                                      prefixIcon: Icon(
+//                                        Icons.score,
+//                                        color: Colors.blue,
+//                                      ),
+//                                      labelText: 'Cost Price',
+//                                      hintText: "Amount",
+//                                      labelStyle:
+//                                          TextStyle(color: Colors.black54),
+//                                      border: OutlineInputBorder()),
+//                                ),
+//                              ),
+//                              Padding(
+//                                padding: const EdgeInsets.all(18.0),
+//                                child: TextFormField(
+//                                  onSaved: (String value) {
+//                                    sellingPrice = value;
+//                                  },
+//                                  validator: _validateSellingPrice,
+//                                  controller: _sellingPriceController,
+//                                  keyboardType: TextInputType.number,
+//                                  textInputAction: TextInputAction.next,
+//                                  onFieldSubmitted: (v) {
+//                                    FocusScope.of(context).requestFocus(focus5);
+//                                  },
+//                                  focusNode: focus4,
+//                                  // obscureText: true,
+//                                  style: TextStyle(
+//                                    color: Colors.black,
+//                                  ),
+//                                  decoration: InputDecoration(
+//                                      prefixIcon: Icon(
+//                                        Icons.monetization_on,
+//                                        color: Colors.blue,
+//                                      ),
+//                                      labelText: 'Selling Price',
+//                                      hintText: "Amount",
+//                                      labelStyle:
+//                                          TextStyle(color: Colors.black54),
+//                                      border: OutlineInputBorder()),
+//                                ),
+//                              ),
 
-                              Padding(
-                                padding: const EdgeInsets.all(18.0),
-                                child: TextFormField(
-                                  onSaved: (String value) {
-                                    costPrice = value;
-                                  },
-                                  validator: _validateCostPrice,
-                                  controller: _costPriceController,
-                                  keyboardType: TextInputType.number,
-                                  textInputAction: TextInputAction.next,
-                                  onFieldSubmitted: (v) {
-                                    FocusScope.of(context).requestFocus(focus4);
-                                  },
-                                  focusNode: focus3,
-                                  //    obscureText: true,
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                  ),
-                                  decoration: InputDecoration(
-                                      prefixIcon: Icon(
-                                        Icons.score,
-                                        color: Colors.blue,
-                                      ),
-                                      labelText: 'Cost Price',
-                                      hintText: "Amount",
-                                      labelStyle:
-                                          TextStyle(color: Colors.black54),
-                                      border: OutlineInputBorder()),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(18.0),
-                                child: TextFormField(
-                                  onSaved: (String value) {
-                                    sellingPrice = value;
-                                  },
-                                  validator: _validateSellingPrice,
-                                  controller: _sellingPriceController,
-                                  keyboardType: TextInputType.number,
-                                  textInputAction: TextInputAction.next,
-                                  onFieldSubmitted: (v) {
-                                    FocusScope.of(context).requestFocus(focus5);
-                                  },
-                                  focusNode: focus4,
-                                  // obscureText: true,
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                  ),
-                                  decoration: InputDecoration(
-                                      prefixIcon: Icon(
-                                        Icons.monetization_on,
-                                        color: Colors.blue,
-                                      ),
-                                      labelText: 'Selling Price',
-                                      hintText: "Amount",
-                                      labelStyle:
-                                          TextStyle(color: Colors.black54),
-                                      border: OutlineInputBorder()),
-                                ),
-                              ),
+
+
                               Padding(
                                 padding: const EdgeInsets.all(18.0),
                                 child: TextFormField(
@@ -538,7 +540,7 @@ class _add_product_lineState extends State<add_product_line> {
                                   textInputAction: TextInputAction.next,
                                   textCapitalization: TextCapitalization.words,
                                   onFieldSubmitted: (v) {
-                                    FocusScope.of(context).requestFocus(focus6);
+                                    FocusScope.of(context).requestFocus(focus7);
                                   },
                                   focusNode: focus5,
                                   style: TextStyle(
@@ -557,36 +559,36 @@ class _add_product_lineState extends State<add_product_line> {
                                       border: OutlineInputBorder()),
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(18.0),
-                                child: TextFormField(
-                                  onSaved: (String value) {
-                                    value == null
-                                        ? discount = ""
-                                        : discount = value;
-                                  },
-                                  controller: _discountController,
-                                  onFieldSubmitted: (v) {
-                                    FocusScope.of(context).requestFocus(focus7);
-                                  },
-                                  enabled: true,
-                                  focusNode: focus6,
-                                  textInputAction: TextInputAction.next,
-                                  style: TextStyle(
-                                    color: Colors.green[900],
-                                  ),
-                                  keyboardType: TextInputType.number,
-                                  decoration: InputDecoration(
-                                      prefixIcon: Icon(
-                                        Icons.money_off,
-                                        color: Colors.green,
-                                      ),
-                                      labelText: 'Discount (optional)',
-                                      labelStyle:
-                                          TextStyle(color: Colors.black54),
-                                      border: OutlineInputBorder()),
-                                ),
-                              ),
+//                              Padding(
+//                                padding: const EdgeInsets.all(18.0),
+//                                child: TextFormField(
+//                                  onSaved: (String value) {
+//                                    value == null
+//                                        ? discount = ""
+//                                        : discount = value;
+//                                  },
+//                                  controller: _discountController,
+//                                  onFieldSubmitted: (v) {
+//                                    FocusScope.of(context).requestFocus(focus7);
+//                                  },
+//                                  enabled: true,
+//                                  focusNode: focus6,
+//                                  textInputAction: TextInputAction.next,
+//                                  style: TextStyle(
+//                                    color: Colors.green[900],
+//                                  ),
+//                                  keyboardType: TextInputType.number,
+//                                  decoration: InputDecoration(
+//                                      prefixIcon: Icon(
+//                                        Icons.money_off,
+//                                        color: Colors.green,
+//                                      ),
+//                                      labelText: 'Discount (optional)',
+//                                      labelStyle:
+//                                          TextStyle(color: Colors.black54),
+//                                      border: OutlineInputBorder()),
+//                                ),
+//                              ),
                               Padding(
                                 padding: const EdgeInsets.all(18.0),
                                 child: GestureDetector(
@@ -747,11 +749,8 @@ class _add_product_lineState extends State<add_product_line> {
         _nameController.text.trim().toUpperCase(),
         _productCategoryController.text.trim().toUpperCase(),
         _subCategoryController.text.trim().toUpperCase(),
-        _costPriceController.text.trim(),
-        _sellingPriceController.text.trim(),
-        model.trim(),
-        discount.trim(),
-        expiry.trim(),
+          model.trim(),
+          expiry.trim(),
       );
     } else {
       setState(() => _autoValidate = true);
