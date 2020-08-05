@@ -242,7 +242,7 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
                             fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        "₦ " + widget.items[index]["amount_paid"],
+                        "₦ ",
                         maxLines: 1,
                         style: TextStyle(
                             color: Colors.black87,
@@ -273,7 +273,7 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
                             fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        widget.items[index]["vendor_id"],
+                        "",
                         maxLines: 1,
                         style: TextStyle(
                             color: Colors.black87,
@@ -348,7 +348,7 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
           children: <Widget>[
             Container(
               // width: double.infinity,
-              height: 100,
+              height: 120,
               color: Colors.deepOrange,
               alignment: Alignment.topCenter,
               child: Padding(
@@ -389,7 +389,7 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
                           innerTopWidget: _buildInnerTopWidget(index),
                           innerBottomWidget: _buildInnerBottomWidget(index),
                           cellSize:
-                              Size(MediaQuery.of(context).size.width, 125),
+                              Size(MediaQuery.of(context).size.width, 90),
                           padding: EdgeInsets.all(15),
                           animationDuration: Duration(milliseconds: 300),
                           borderRadius: 10,
