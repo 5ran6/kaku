@@ -18,8 +18,11 @@ class InvoiceSummary extends StatefulWidget {
   List items = []; // goes inner top
   List items_names = []; // goes inner top
   List prices = []; // goes inner top
+  String customer_email;
+  String phone;
 
-  InvoiceSummary(this.name, this.items, this.items_names, this.prices);
+  InvoiceSummary(this.name, this.items, this.items_names, this.prices,
+      this.customer_email, this.phone);
 
   @override
   _InvoiceSummaryState createState() => _InvoiceSummaryState();
@@ -31,7 +34,7 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
   AnimationController _animationController;
 
   static const headerAniInterval =
-  const Interval(.1, .3, curve: Curves.easeOut);
+      const Interval(.1, .3, curve: Curves.easeOut);
   Animation<double> _headerScaleAnimation;
   Animation<Color> _buttonColor;
   Animation<double> _animateIcon;
@@ -40,23 +43,27 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
   double _fabHeight = 56.0;
   bool _isVisible = false;
   double i;
-  int total_amount=0;
+  int total_amount = 0;
 
   @override
   initState() {
     // i = double.parse(widget.payment_count);
 //    print(widget.payments[0].toString());
 
-
-    for (String price in widget.prices) {
+    widget.prices.forEach((price) {
+      print('Price: $price');
       total_amount += int.parse(price);
-    }
+    });
+
+//    for (String price in widget.prices) {
+//      total_amount += int.parse(price);
+//    }
 
     _animationController =
-    AnimationController(vsync: this, duration: Duration(milliseconds: 500))
-      ..addListener(() {
-        setState(() {});
-      });
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500))
+          ..addListener(() {
+            setState(() {});
+          });
     _animateIcon =
         Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
     _buttonColor = ColorTween(
@@ -294,10 +301,10 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
               child: FlatButton(
                 onPressed: () {
                   SimpleFoldingCellState foldingCellState =
-                  // ignore: deprecated_member_use
-                  context.ancestorStateOfType(
-                    // ignore: deprecated_member_use
-                      TypeMatcher<SimpleFoldingCellState>());
+                      // ignore: deprecated_member_use
+                      context.ancestorStateOfType(
+                          // ignore: deprecated_member_use
+                          TypeMatcher<SimpleFoldingCellState>());
                   foldingCellState?.toggleFold();
                 },
                 child: Text(
@@ -333,7 +340,7 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
           ),
         ],
         title: Text(
-          //widget.title
+            //widget.title
             'Invoice for ' + widget.name),
       ),
       body: SafeArea(
@@ -362,7 +369,7 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
                             fontStyle: FontStyle.italic),
                       ),
                       Text(
-                        "Total amount: ₦ " +total_amount.toString(),
+                        "Total amount: ₦ " + total_amount.toString(),
                         style: TextStyle(fontSize: 13),
                       ),
                     ],
@@ -382,10 +389,7 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
                           innerTopWidget: _buildInnerTopWidget(index),
                           innerBottomWidget: _buildInnerBottomWidget(index),
                           cellSize:
-                          Size(MediaQuery
-                              .of(context)
-                              .size
-                              .width, 125),
+                              Size(MediaQuery.of(context).size.width, 125),
                           padding: EdgeInsets.all(15),
                           animationDuration: Duration(milliseconds: 300),
                           borderRadius: 10,
@@ -429,6 +433,9 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
               child: new Text("Yes"),
               onPressed: () {
                 if (flag == 1) {
+                  //pay cash
+                  createInvoice(widget.items, widget.name,
+                      widget.customer_email, widget.phone, 1);
                   //cash
                   Toast.show("Transaction Completed", context);
 //                  Navigator.of(context).pop();
@@ -437,7 +444,8 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
                   ));
                 }
                 if (flag == 2) {
-                  makePayment();
+                  //pay later
+                  createInvoice(null, null, null, null, 2);
                 }
               },
             ),
@@ -454,5 +462,29 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
     );
   }
 
-  void makePayment() async {}
+  void createInvoice(List items, String customer_name, String customer_email,
+      String customer_phone, int flag) async {
+    //createInvoice to get invoice_no and I will pass payment_method based on flag
+
+    if (flag == 1) {
+//if pay now
+      makePayment(null, null, "Paid with Cash to KAKU rep!");
+    }
+    if (flag == 2) {
+//if pay later
+      Toast.show("QR Code Sent to your email successfully!", context,
+          duration: Toast.LENGTH_LONG);
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => DashboardScreen(),
+      ));
+    }
+  }
+
+  void makePayment(
+      String invoice_no, String payment_method, String note) async {
+    Toast.show("Payment Approved!", context, duration: Toast.LENGTH_LONG);
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+      builder: (context) => DashboardScreen(),
+    ));
+  }
 }

@@ -15,21 +15,25 @@ import 'invoice_summary.dart';
 //void main() => runApp(QRScan());
 class SalesQRCode extends StatelessWidget {
   String name;
+  String email;
+  String phone;
 
-  SalesQRCode(@required this.name);
+  SalesQRCode(@required this.name, this.email, this.phone);
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      body: new QRScan(name),
+      body: new QRScan(name, email, phone),
     );
   }
 }
 
 class QRScan extends StatefulWidget {
   String customer_name;
+  String customer_email;
+  String customer_phone;
 
-  QRScan(@required this.customer_name);
+  QRScan(@required this.customer_name, this.customer_email, this.customer_phone);
 
   @override
   _QRScanState createState() => _QRScanState();
@@ -198,8 +202,9 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
           );
         }).then((int value) {
       if (value != null) {
-        addInvoice(barcode, quantity, name, price);
         Navigator.pop(context);
+        addInvoice(barcode, quantity, name, price);
+
 
 //        setState(() => _currentQuantity = value);
       }
@@ -236,7 +241,7 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
 
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => InvoiceSummary(
-          widget.customer_name, items, items_names, prices),
+          widget.customer_name, items, items_names, prices, widget.customer_email, widget.customer_phone),
     ));
   }
 
@@ -265,18 +270,6 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
                     color: Colors.black,
                     child: QRCaptureView(
                       controller: _captureController,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 56),
-                    child: AspectRatio(
-                      aspectRatio: 264 / 258.0,
-                      child: Stack(
-                        alignment: _animation.value,
-                        children: <Widget>[
-                          //                        Image.asset('assets/images/scan_area_1.png')
-                        ],
-                      ),
                     ),
                   ),
                   Align(

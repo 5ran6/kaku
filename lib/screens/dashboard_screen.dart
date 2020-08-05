@@ -3,11 +3,9 @@ import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:kaku/screens/add_stock_menu.dart';
 import 'package:kaku/screens/bottom_sheet.dart';
-import 'package:kaku/screens/invoices.dart';
 import 'package:kaku/screens/reports.dart';
 import 'package:kaku/screens/specific_report.dart';
 import 'package:kaku/screens/vendor.dart';
-import 'package:kaku/widgets/make_sale.dart';
 import 'package:permissions_plugin/permissions_plugin.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +24,6 @@ import '../widgets/animated_numeric_text.dart';
 import '../widgets/bottom_sheet_add_employees.dart';
 import '../widgets/fade_in.dart';
 import '../widgets/round_button.dart';
-import 'add_stock.dart';
 import 'dashboard.dart';
 import 'package:http/http.dart' as http;
 
@@ -56,11 +53,6 @@ class _DashboardScreenState extends State<DashboardScreen>
   Future<bool> _goToLogi(BuildContext context) async {
     try {
       sign = true;
-//      await _auth.logout();
-//      //  FirebaseUser user = result.user;
-//      //create a document for the user in users collections
-//      await DatabaseService(uid: widget.user.uid)
-//          .updateUserData(widget.user.email, false);
       return Navigator.of(context)
           .pushReplacementNamed(LoginScreen.routeName)
           // we don't want to pop the screen, just replace it completely
@@ -463,10 +455,6 @@ class _DashboardScreenState extends State<DashboardScreen>
           interval: Interval(step * 2, aniInterval + step * 2),
           onPressed: () => {
             exiting()
-//            Navigator.of(context).push(MaterialPageRoute(
-//              builder: (context) =>
-//                  SpecificReport(null, null, null, null, null, null),
-//            ))
           },
         ),
       ],
@@ -567,27 +555,7 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-//  Widget showPrompt(BuildContext context) {
-//    showDialog(
-//        context: context,
-//        builder: (_) => AssetGiffyDialog(
-//              onlyOkButton: true,
-//              image: Image.asset('assets/images/broadcast.gif'),
-//              title: Text(
-//                'Broadcast to drivers',
-//                style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600),
-//              ),
-//              description: Text(
-//                'Do you want a new delivery request to be broadcasted to all drivers online?',
-//                textAlign: TextAlign.center,
-//                style: TextStyle(),
-//              ),
-//              entryAnimation: EntryAnimation.DEFAULT,
-//              onOkButtonPressed: () {
-//                //TODO: Make a broadcast
-//              },
-//            ));
-//  }
+
   int counter = 0;
 
   void getReportToday(String date) async {
