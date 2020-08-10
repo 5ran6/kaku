@@ -8,7 +8,7 @@ class stockList {
         ? this.itemsList.map((i) => i.toJson()).toList()
         : null;
 
-    return {'stockList': itemListed};
+    return {'stockLists': itemListed};
   }
 }
 

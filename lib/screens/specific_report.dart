@@ -148,7 +148,7 @@ class _SpecificReportState extends State<SpecificReport>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            widget.payments[index]["receipt_no"],
+                            widget.payments[index]["created_at"].toString().split("T")[0],
                             maxLines: 1,
                             style: TextStyle(
                                 color: Colors.black,

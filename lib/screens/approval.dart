@@ -44,7 +44,7 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
       setState(() {
         _captureText = data;
         captured = true;
-        addStock(_captureText.trim());
+        makeSales(_captureText.trim());
         print('I just captured----$data');
         //call approval API here
       });
@@ -74,15 +74,15 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  void addStock(String barcode) async {
+  void makeSales(String barcode) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token');
     print('token: ' + token);
-    String invoice_no, payment_method, note = '';
+    String   payment_method= "Cash via KAKU", note = '';
     
     bool isSuccess = false;
     Map data = {
-      'invoice_no': invoice_no,
+      'invoice_no': barcode,
       'payment_method': payment_method,
       'note': note
     };

@@ -504,8 +504,11 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
       'customer_email': customer_email,
       'customer_phone': customer_phone,
       'customer_name': customer_name,
-      'stockList': list
+      'stockLists': list
     };
+    print('Params: ' + data.toString());
+
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.get('token');
 //    Toast.show(list.toString(), context);
@@ -515,6 +518,8 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
         await http.post(Constants.domain + "createInvoice", body: data, headers: {
       'Authorization': 'Bearer $token',
     });
+
+
 
     print('Status Code = ' + response.statusCode.toString());
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -551,14 +556,14 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
             error = jsonData['message'].toString();
           }
           //////////////////////////////////////////////////////
-          Toast.show("Oops! $error", context);
+          Toast.show("$error", context);
         }
       } on FormatException catch (exception) {
         print('Exception: ' + exception.toString());
         print('Error' + response.body);
         String error = "";
         error = 'Oops! Something went wrong.';
-        Toast.show("Oops! $error", context);
+        Toast.show("$error", context);
       }
     }
   }
