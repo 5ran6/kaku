@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:folding_cell/folding_cell.dart';
+import 'package:kaku/constants.dart';
+import 'package:kaku/models/stock_list.dart';
 import 'package:kaku/screens/dashboard.dart';
 import 'package:kaku/screens/dashboard_screen.dart';
 import 'package:kaku/screens/login_screen.dart';
@@ -10,6 +14,7 @@ import 'package:kaku/widgets/fade_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:kaku/screens/bottom_sheet.dart';
 import 'package:toast/toast.dart';
+import 'package:http/http.dart' as http;
 
 final bSheet = bottomSheet();
 
@@ -159,7 +164,7 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            widget.name[index],
+                            widget.items_names[index],
                             maxLines: 1,
                             style: TextStyle(
                                 color: Colors.black,
@@ -335,8 +340,13 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
         backgroundColor: Colors.deepOrange,
         elevation: 0,
         actions: <Widget>[
-          Icon(
-            Icons.assignment,
+          IconButton(
+            icon: new Icon(Icons.content_copy),
+            highlightColor: Colors.white,
+            onPressed: () {
+              Toast.show("Phone number copied to clipboard", context);
+              Clipboard.setData(ClipboardData(text: widget.phone));
+            },
           ),
         ],
         title: Text(
@@ -379,7 +389,7 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
             ),
             Expanded(
               child: Container(
-                //height: MediaQuery.of(context).size.height - 150.0,
+                height: double.infinity,
                 color: Colors.deepOrange,
                 child: ListView.builder(
                     itemCount: widget.items_names.length,
@@ -388,8 +398,7 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
                           frontWidget: _buildFrontWidget(index),
                           innerTopWidget: _buildInnerTopWidget(index),
                           innerBottomWidget: _buildInnerBottomWidget(index),
-                          cellSize:
-                              Size(MediaQuery.of(context).size.width, 90),
+                          cellSize: Size(MediaQuery.of(context).size.width, 90),
                           padding: EdgeInsets.all(15),
                           animationDuration: Duration(milliseconds: 300),
                           borderRadius: 10,
@@ -398,22 +407,39 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
                     }),
               ),
             ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Column(
+                children: <Widget>[
+                  MaterialButton(
+                    onPressed: () => _showDialog(' with cash', 1),
+                    color: Colors.blue,
+                    splashColor: Colors.white.withOpacity(0.5),
+                    minWidth: double.infinity,
+                    height: 50,
+                    child: Text(
+                      "'Pay Now (Cash)'",
+                      style: TextStyle(fontSize: 15, color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  MaterialButton(
+                    onPressed: () => _showDialog(' Later', 2),
+                    color: Colors.white30,
+                    splashColor: Colors.blue.withOpacity(0.5),
+                    minWidth: double.infinity,
+                    height: 50,
+                    child: Text(
+                      "Pay Later",
+                      style: TextStyle(fontSize: 15, color: Colors.black),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
-      ),
-      floatingActionButton: Column(
-        children: <Widget>[
-          FlatButton(
-              onPressed: () => _showDialog(' with cash', 1),
-              color: Colors.blue,
-              child: Text('Pay Now (Cash)'),
-              splashColor: Colors.white.withOpacity(0.5)),
-          FlatButton(
-              onPressed: () => _showDialog(' Later', 2),
-              color: Colors.white,
-              child: Text('Pay Later'),
-              splashColor: Colors.blue.withOpacity(0.5)),
-        ],
       ),
     );
   }
@@ -466,25 +492,125 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
       String customer_phone, int flag) async {
     //createInvoice to get invoice_no and I will pass payment_method based on flag
 
-    if (flag == 1) {
+    stockList cart = stockList(items);
+    String list = jsonEncode(cart);
+    Map data = {
+      'customer_email': customer_email,
+      'customer_phone': customer_phone,
+      'customer_name': customer_name,
+      'stockList': list
+    };
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.get('token');
+
+    var jsonData;
+    var response =
+        await http.post(Constants.domain + "createInvoice", body: data, headers: {
+      'Authorization': 'Bearer $token',
+    });
+
+    print('Status Code = ' + response.statusCode.toString());
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      jsonData = json.decode(response.body);
+      print('success: ' + response.body);
+
+      if (flag == 1) {
+        String invoice_no = jsonData['data'];
 //if pay now
-      makePayment(null, null, "Paid with Cash to KAKU rep!");
-    }
-    if (flag == 2) {
+        makePayment(invoice_no, "Cash", "Paid with Cash to KAKU rep!");
+      }
+      if (flag == 2) {
 //if pay later
-      Toast.show("QR Code Sent to your email successfully!", context,
-          duration: Toast.LENGTH_LONG);
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => DashboardScreen(),
-      ));
+        //create Invoice routine
+        Toast.show("QR Code Sent to your email successfully!", context,
+            duration: Toast.LENGTH_LONG);
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => DashboardScreen(),
+        ));
+      }
+    } else {
+      try {
+        jsonData = json.decode(response.body);
+        print('failed: ' + response.body);
+        if (response.statusCode == 422) {
+          //user not found prompt
+          String error = "";
+          ///////////TODO///////////////////////////////////////////
+          if (jsonData['errors'].toString() != 'null') {
+            error = jsonData['errors']
+                .toString()
+                .substring(1, jsonData['errors'].toString().length - 1);
+          } else {
+            error = jsonData['message'].toString();
+          }
+          //////////////////////////////////////////////////////
+          Toast.show("Oops! $error", context);
+        }
+      } on FormatException catch (exception) {
+        print('Exception: ' + exception.toString());
+        print('Error' + response.body);
+        String error = "";
+        error = 'Oops! Something went wrong.';
+        Toast.show("Oops! $error", context);
+      }
     }
   }
 
   void makePayment(
       String invoice_no, String payment_method, String note) async {
-    Toast.show("Payment Approved!", context, duration: Toast.LENGTH_LONG);
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
-      builder: (context) => DashboardScreen(),
-    ));
+
+    Map data = {
+      'invoice_no': invoice_no,
+      'payment_method': payment_method,
+      'note': note
+    };
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.get('token');
+
+    var jsonData;
+    var response =
+    await http.post(Constants.domain + "makePayment", body: data, headers: {
+      'Authorization': 'Bearer $token',
+    });
+
+    print('Status Code = ' + response.statusCode.toString());
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      jsonData = json.decode(response.body);
+      print('success: ' + response.body);
+      Toast.show("Payment Approved!", context, duration: Toast.LENGTH_LONG);
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => DashboardScreen(),
+      ));
+
+        } else {
+      try {
+        jsonData = json.decode(response.body);
+        print('failed: ' + response.body);
+        if (response.statusCode == 422) {
+          //user not found prompt
+          String error = "";
+          ///////////TODO///////////////////////////////////////////
+          if (jsonData['errors'].toString() != 'null') {
+            error = jsonData['errors']
+                .toString()
+                .substring(1, jsonData['errors'].toString().length - 1);
+          } else {
+            error = jsonData['message'].toString();
+          }
+          //////////////////////////////////////////////////////
+          Toast.show("Oops! $error", context);
+        }
+      } on FormatException catch (exception) {
+        print('Exception: ' + exception.toString());
+        print('Error' + response.body);
+        String error = "";
+        error = 'Oops! Something went wrong.';
+        Toast.show("Oops! $error", context);
+      }
+    }
+
+
+
+
   }
 }

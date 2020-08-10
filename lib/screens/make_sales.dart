@@ -54,6 +54,7 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+  
 
     _captureController.onCapture((data) {
       print('onCapture----$data');
@@ -259,7 +260,7 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
               floatingActionButton: FloatingActionButton(
                 child: Icon(Icons.done),
                 backgroundColor: Colors.blue,
-                onPressed: () => createInvoice(items, items_names, prices),
+                onPressed: () => items.length>0? createInvoice(items, items_names, prices) : Toast.show("You have not added any item to the cart", context),
               ),
               body: Stack(
                 alignment: Alignment.center,
