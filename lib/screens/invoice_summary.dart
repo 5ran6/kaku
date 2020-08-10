@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:folding_cell/folding_cell.dart';
 import 'package:kaku/constants.dart';
 import 'package:kaku/models/stock_list.dart';
+import 'package:kaku/models/stock_list.dart';
+import 'package:kaku/models/stock_list.dart';
 import 'package:kaku/screens/dashboard.dart';
 import 'package:kaku/screens/dashboard_screen.dart';
 import 'package:kaku/screens/login_screen.dart';
@@ -20,13 +22,13 @@ final bSheet = bottomSheet();
 
 class InvoiceSummary extends StatefulWidget {
   String name;
-  List items = []; // goes inner top
+  List <items> itemsList = []; // goes inner top
   List items_names = []; // goes inner top
   List prices = []; // goes inner top
   String customer_email;
   String phone;
 
-  InvoiceSummary(this.name, this.items, this.items_names, this.prices,
+  InvoiceSummary(this.name, this.itemsList, this.items_names, this.prices,
       this.customer_email, this.phone);
 
   @override
@@ -181,7 +183,7 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
                                 fontWeight: FontWeight.w300),
                           ),
                           Text(
-                            "Quantity: " + widget.items[index]["quantity"],
+                            "Quantity: " + widget.itemsList[index].quantity.toString(),
                             maxLines: 1,
                             style: TextStyle(
                                 color: Colors.black,
@@ -368,7 +370,7 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
                   child: Column(
                     children: <Widget>[
                       Text(
-                        widget.items.length.toString(),
+                        widget.itemsList.length.toString(),
                         style: TextStyle(fontSize: 30),
                       ),
                       Text(
@@ -412,13 +414,13 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
               child: Column(
                 children: <Widget>[
                   MaterialButton(
-                    onPressed: () => _showDialog(' with cash', 1),
+                    onPressed: () => _showDialog(' over the counter', 1),
                     color: Colors.blue,
                     splashColor: Colors.white.withOpacity(0.5),
                     minWidth: double.infinity,
                     height: 50,
                     child: Text(
-                      "'Pay Now (Cash)'",
+                      "Pay Now",
                       style: TextStyle(fontSize: 15, color: Colors.white),
                       textAlign: TextAlign.center,
                     ),
@@ -457,13 +459,14 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
             // usually buttons at the bottom of the dialog
             new FlatButton(
               child: new Text("Yes"),
-              onPressed: () {
-                if (flag == 1) {
+              onPressed: () async {
+                if (flag == 1)  {
                   //pay cash
-                  createInvoice(widget.items, widget.name,
+                  Toast.show("Processing ....", context);
+                  createInvoice(widget.itemsList, widget.name,
                       widget.customer_email, widget.phone, 1);
                   //cash
-                  Toast.show("Transaction Completed", context);
+              //    Toast.show("Transaction Completed", context);
 //                  Navigator.of(context).pop();
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
                     builder: (context) => DashboardScreen(),
@@ -471,7 +474,10 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
                 }
                 if (flag == 2) {
                   //pay later
-                  createInvoice(null, null, null, null, 2);
+                  Toast.show("Processing ....", context);
+
+                   createInvoice(widget.itemsList, widget.name,
+                      widget.customer_email, widget.phone, 2);
                 }
               },
             ),
@@ -488,7 +494,7 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
     );
   }
 
-  void createInvoice(List items, String customer_name, String customer_email,
+  void createInvoice(List <items> items, String customer_name, String customer_email,
       String customer_phone, int flag) async {
     //createInvoice to get invoice_no and I will pass payment_method based on flag
 
@@ -502,6 +508,7 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
     };
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.get('token');
+//    Toast.show(list.toString(), context);
 
     var jsonData;
     var response =

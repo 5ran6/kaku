@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kaku/models/stock_list.dart';
 import 'package:kaku/models/stocks.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:qrcode/qrcode.dart';
@@ -33,7 +34,8 @@ class QRScan extends StatefulWidget {
   String customer_email;
   String customer_phone;
 
-  QRScan(@required this.customer_name, this.customer_email, this.customer_phone);
+  QRScan(
+      @required this.customer_name, this.customer_email, this.customer_phone);
 
   @override
   _QRScanState createState() => _QRScanState();
@@ -44,7 +46,7 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
   Animation<Alignment> _animation;
   AnimationController _animationController;
   final _formKey = new GlobalKey<FormState>();
-  List items = [];
+  List<items> itemsList = [];
   List items_names = [];
   List prices = [];
   bool _isTorchOn = false, captured = false;
@@ -54,7 +56,6 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-  
 
     _captureController.onCapture((data) {
       print('onCapture----$data');
@@ -206,7 +207,6 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
         Navigator.pop(context);
         addInvoice(barcode, quantity, name, price);
 
-
 //        setState(() => _currentQuantity = value);
       }
     });
@@ -217,11 +217,11 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
     //bottomSheet
 
     //add to list
-    items.add({'stock_id': stock_id, 'quantity': quantity});
+    itemsList.add(items(stock_id, int.parse(quantity)));
     items_names.add(name);
     prices.add(price);
-    print('Item size: ' + items.length.toString());
-    print('Items: ' + items.toString());
+    print('Item size: ' + itemsList.length.toString());
+    print('Items: ' + itemsList.toString());
     print('Names: ' + items_names.toString());
     print('Prices: ' + prices.toString());
 
@@ -237,12 +237,12 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
     });
   }
 
-  void createInvoice(List items, List names, List prices) async {
+  void createInvoice(List<items> itemsList, List names, List prices) async {
     //call invoice summary UI.
 
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => InvoiceSummary(
-          widget.customer_name, items, items_names, prices, widget.customer_email, widget.customer_phone),
+      builder: (context) => InvoiceSummary(widget.customer_name, itemsList,
+          items_names, prices, widget.customer_email, widget.customer_phone),
     ));
   }
 
@@ -260,7 +260,10 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
               floatingActionButton: FloatingActionButton(
                 child: Icon(Icons.done),
                 backgroundColor: Colors.blue,
-                onPressed: () => items.length>0? createInvoice(items, items_names, prices) : Toast.show("You have not added any item to the cart", context),
+                onPressed: () => itemsList.length > 0
+                    ? createInvoice(itemsList, items_names, prices)
+                    : Toast.show(
+                        "You have not added any item to the cart", context),
               ),
               body: Stack(
                 alignment: Alignment.center,
@@ -286,7 +289,23 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
     );
   }
 
+  void payWithoutQR(){
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text(
+        "Pay without QR Code?",
+        style: TextStyle(color: Colors.green),
+      ),
+      action: SnackBarAction(
+        textColor: Colors.white,
+        label: 'Yes',
+        onPressed: () {},
+      ),
+    ));
+
+  }
+
   Widget _buildToolBar() {
+
     return Row(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,
