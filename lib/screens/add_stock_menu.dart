@@ -76,75 +76,80 @@ class _StockListState extends State<StockList> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _onBackPressed,
-      child:   Scaffold(
-              backgroundColor: Colors.grey[200],
-              appBar: AppBar(
-                leading: IconButton(
-                    icon: Icon(Icons.arrow_back),
-                    onPressed: () => Navigator.pop(context)),
-                title: const Text('List of Added Stocks'),
-              ),
-              body: Container(
-                child: FutureBuilder(
-                  future: getStocks(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.data == null) {
-                      return Container(
-                        child: Center(child: CircularProgressIndicator()),
-                      );
-                    } else {
-                      return ListView.builder(
-                        itemCount: snapshot.data.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: EdgeInsets.only(top: 8.0),
-                            child: Card(
-                              margin: EdgeInsets.fromLTRB(10.0, 6, 10, 0),
-                              child: ListTile(
-                                onTap: () {
-                              //MIGHT REMOVE THIS
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => update_stock(stock_id: widget.list[index]['id'], cost_price: widget.list[index]['cost_price'], selling_price: widget.list[index]['selling_price'],
-                                      description: widget.list[index]['description'],discount: widget.list[index]['discount'],quantity: widget.list[index]['current_quantity'],),
-                                  ));
-
-                                },
-                                trailing: Icon(
-                                  Icons.navigate_next,
-                                ),
-                                leading: Icon(Icons.store),
-                                title:
-                                    Text(widget.list[index]['product']['name']),
-                                subtitle: Text("Cost Price:  ₦" +
-                                    widget.list[index]['cost_price'] +
-                                    " \nSelling Price: ₦" +
-                                    widget.list[index]['selling_price'] +
-                                    " \nAdded on: " +
-                                    widget.list[index]['created_at']
-                                        .split("T")[0] +
-                                    " \nCurrent Quantity: " +
-                                    widget.list[index]['current_quantity']),
+      child: Scaffold(
+        backgroundColor: Colors.grey[200],
+        appBar: AppBar(
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () => Navigator.pop(context)),
+          title: const Text('List of Added Stocks'),
+        ),
+        body: Container(
+          child: FutureBuilder(
+            future: getStocks(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.data == null) {
+                return Container(
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              } else {
+                return ListView.builder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: EdgeInsets.only(top: 8.0),
+                      child: Card(
+                        margin: EdgeInsets.fromLTRB(10.0, 6, 10, 0),
+                        child: ListTile(
+                          onTap: () {
+                            //MIGHT REMOVE THIS
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => update_stock(
+                                stock_id: widget.list[index]['id'],
+                                cost_price: widget.list[index]['cost_price'],
+                                selling_price: widget.list[index]
+                                    ['selling_price'],
+                                description: widget.list[index]['description'],
+                                discount: widget.list[index]['discount'],
+                                quantity: widget.list[index]
+                                    ['current_quantity'],
                               ),
-                            ),
-                          );
-                        },
-                      );
-                    }
+                            ));
+                          },
+                          trailing: Icon(
+                            Icons.navigate_next,
+                          ),
+                          leading: Icon(Icons.store),
+                          title: Text(widget.list[index]['product']['name']),
+                          subtitle: Text("Cost Price:  ₦" +
+                              widget.list[index]['cost_price'] +
+                              " \nSelling Price: ₦" +
+                              widget.list[index]['selling_price'] +
+                              " \nAdded on: " +
+                              widget.list[index]['created_at'].split("T")[0] +
+                              " \nCurrent Quantity: " +
+                              widget.list[index]['current_quantity']),
+                        ),
+                      ),
+                    );
                   },
-                ),
-              ),
-              floatingActionButton: FloatingActionButton(
-                child: Icon(Icons.add),
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-                onPressed: () {
-                  //Navigate
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => ProductsListToSelect(),
-                  ));
-                },
-              ),
-            ),
+                );
+              }
+            },
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
+          onPressed: () {
+            //Navigate
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => ProductsListToSelect(),
+            ));
+          },
+        ),
+      ),
     );
   }
 }
