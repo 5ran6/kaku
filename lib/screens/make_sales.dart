@@ -30,9 +30,9 @@ class SalesQRCode extends StatelessWidget {
 }
 
 class QRScan extends StatefulWidget {
-  String customer_name;
-  String customer_email;
-  String customer_phone;
+  String customer_name = '';
+  String customer_email = '';
+  String customer_phone = '';
 
   QRScan(
       @required this.customer_name, this.customer_email, this.customer_phone);
@@ -106,6 +106,7 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
       'Authorization': 'Bearer $token',
     });
     print('Status Code = ' + response.statusCode.toString());
+    print(response.body.toString());
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       try {
@@ -114,8 +115,22 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
 //        print('created_at: ' + parsed['created_at']);
 
         // dialogue
-        _showDialog1(barcode, parsed['product']['name'],
-            parsed['current_quantity'], parsed['selling_price']);
+        if (int.parse(parsed['current_quantity']) > 0) {
+          _showDialog1(barcode, parsed['product']['name'],
+              parsed['current_quantity'], parsed['selling_price']);
+        } else {
+          print(response.body.toString());
+          setState(() {
+            captured = false;
+            Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text(
+                "Sorry, this product is out of stock",
+                style: TextStyle(color: Colors.redAccent),
+              ),
+            ));
+          });
+//          Toast.show("Sorry, this product is out of stock", context);
+        }
       } on FormatException catch (exception) {
         isSuccess = false;
         print('Exception: ' + exception.toString());
@@ -193,23 +208,27 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
 
   void _showDialog1(
       String barcode, String name, String quantity, String price) {
-    showDialog<int>(
-        context: context,
-        builder: (BuildContext context) {
-          return new NumberPickerDialog.integer(
-            minValue: 1,
-            maxValue: int.parse(quantity),
-            title: new Text("Select the quantity"),
-            initialIntegerValue: 1,
-          );
-        }).then((int value) {
-      if (value != null) {
-        Navigator.pop(context);
-        addInvoice(barcode, quantity, name, price);
+    try {
+      showDialog<int>(
+          context: context,
+          builder: (BuildContext context) {
+            return new NumberPickerDialog.integer(
+              minValue: 1,
+              maxValue: int.parse(quantity),
+              title: new Text("Select the quantity"),
+              initialIntegerValue: 1,
+            );
+          }).then((int value) {
+        if (value != null) {
+          Navigator.pop(context);
+          addInvoice(barcode, quantity, name, price);
 
 //        setState(() => _currentQuantity = value);
-      }
-    });
+        }
+      });
+    } catch (e) {
+      Toast.show("Sorry! Product is not in stock", context);
+    }
   }
 
   void addInvoice(
@@ -289,7 +308,7 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
     );
   }
 
-  void payWithoutQR(){
+  void payWithoutQR() {
     Scaffold.of(context).showSnackBar(SnackBar(
       content: Text(
         "Pay without QR Code?",
@@ -301,11 +320,9 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
         onPressed: () {},
       ),
     ));
-
   }
 
   Widget _buildToolBar() {
-
     return Row(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -317,7 +334,10 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
           onPressed: () {
             _captureController.pause();
           },
-          child: Text('Pause'),
+          child: Text(
+            'Pause',
+            style: TextStyle(color: Colors.white),
+          ),
         ),
         FlatButton(
           shape: RoundedRectangleBorder(
@@ -331,7 +351,10 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
             }
             _isTorchOn = !_isTorchOn;
           },
-          child: Text('Torch'),
+          child: Text(
+            'Torch',
+            style: TextStyle(color: Colors.white),
+          ),
         ),
         FlatButton(
           shape: RoundedRectangleBorder(
@@ -340,7 +363,10 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
           onPressed: () {
             _captureController.resume();
           },
-          child: Text('Resume'),
+          child: Text(
+            'Resume',
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       ],
     );

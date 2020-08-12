@@ -100,18 +100,13 @@ class _add_product_lineState extends State<add_product_line> {
       String name,
       String product_category_id,
       String product_subcategory_id,
-
       String model,
-
       String expiry_date) async {
     Map data = {
       'name': name.trim(),
       'product_category_id': product_category_id.trim(),
       'product_subcategory_id': product_subcategory_id.trim(),
-
-
       'model': model.trim(),
-
       'expiry_date': expiry_date.trim()
     };
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();

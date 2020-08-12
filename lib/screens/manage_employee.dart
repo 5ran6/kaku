@@ -106,7 +106,8 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                               widget.list[index]['lastname'] +
                                   " " +
                                   widget.list[index]['firstname'],
-                              widget.list[index]['user']['is_active']);
+                              widget.list[index]['user']['is_active'],
+                              widget.list[index]['user']['role']);
                         },
                         trailing: Icon(
                           widget.list[index]['user']['is_active'] == "1"
@@ -132,7 +133,51 @@ class _ManageEmployeeState extends State<ManageEmployee> {
   }
 
   showAlertDialog(BuildContext context, String id, String phoneNumber,
-      String name, String status) {
+      String name, String status, String role) {
+    Widget makeEmployee = FlatButton(
+      child: Text("Make Employee"),
+      onPressed: () async {
+        //send just picked to server
+        Map data = {'id': id, 'role': "Employee"};
+        Toast.show("Processing..", context);
+        SharedPreferences sharedPreferences =
+            await SharedPreferences.getInstance();
+        String token = await sharedPreferences.get("token");
+
+        var response = await http.post(
+            Constants.domain + "updateEmployeeRole",
+            body: data,
+            headers: {
+              'Authorization': 'Bearer $token',
+            });
+        print('Response = ' + response.body.toString());
+        Navigator.pop(context);
+        setState(() {});
+      },
+    ); // set up the buttons
+
+    Widget makeAdmin = FlatButton(
+      child: Text("Make Admin"),
+      onPressed: () async {
+        //send just picked to server
+        Map data = {'id': id,'role': "Admin"};
+        Toast.show("Processing..", context);
+        SharedPreferences sharedPreferences =
+            await SharedPreferences.getInstance();
+        String token = await sharedPreferences.get("token");
+
+        var response = await http.post(
+            Constants.domain + "updateEmployeeRole",
+            body: data,
+            headers: {
+              'Authorization': 'Bearer $token',
+            });
+        print('Response = ' + response.body.toString());
+        Navigator.pop(context);
+        setState(() {});
+     },
+    ); // set up the buttons
+
     // set up the buttons
     Widget suspendEmployee = FlatButton(
       child: Text("Suspend Employee"),
@@ -159,6 +204,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
 //        ));
       },
     ); // set up the buttons
+
     Widget unsuspendEmployee = FlatButton(
       child: Text("Unsuspend Employee"),
       onPressed: () async {
@@ -208,12 +254,22 @@ class _ManageEmployeeState extends State<ManageEmployee> {
     AlertDialog alert = AlertDialog(
       title: Text(name),
       content: Text("Want to"),
-      actions: [suspendEmployee, copyPhoneButton, cancelButton],
+      actions: [
+        suspendEmployee,
+        copyPhoneButton,
+        role == 'Employee' ? makeAdmin : makeEmployee,
+        cancelButton
+      ],
     );
     AlertDialog alert2 = AlertDialog(
       title: Text(name),
       content: Text("Want to "),
-      actions: [unsuspendEmployee, copyPhoneButton, cancelButton],
+      actions: [
+        unsuspendEmployee,
+        copyPhoneButton,
+        role == 'Employee' ? makeAdmin : makeEmployee,
+        cancelButton
+      ],
     );
 
     // show the dialog

@@ -100,7 +100,6 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
         jsonData = json.decode(response.body);
         print('success: ' + response.body);
         //parse json
-
         stock = jsonData['data']['product_stocks'].toString();
       } on FormatException catch (exception) {
         isSuccess = false;
@@ -120,7 +119,6 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
     }
     setState(() {
       captured = false;
-
       isSuccess
           ? Scaffold.of(context).showSnackBar(SnackBar(
               content: Text(

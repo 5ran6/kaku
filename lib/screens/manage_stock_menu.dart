@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kaku/constants.dart';
 import 'package:kaku/screens/select_a_product.dart';
+import 'package:kaku/screens/update_stock.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 import 'package:http/http.dart' as http;
@@ -101,7 +102,12 @@ class _StockManageListState extends State<StockManageList> {
                         margin: EdgeInsets.fromLTRB(10.0, 6, 10, 0),
                         child: ListTile(
                           onTap: () {
-//Do nothing
+                            //Do go to Update Stock
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => update_stock(stock_id: widget.list[index]['id'].toString(), cost_price: widget.list[index]['cost_price'], selling_price: widget.list[index]['selling_price'],
+                                description: widget.list[index]['description'],discount: widget.list[index]['discount'],quantity: widget.list[index]['current_quantity'],),
+                            ));
+
                           },
                           trailing: Container(
                             width: 35,

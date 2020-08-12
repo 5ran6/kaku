@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +9,9 @@ import 'package:kaku/widgets/animated_numeric_text.dart';
 import 'package:kaku/widgets/fade_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:kaku/screens/bottom_sheet.dart';
+import 'package:http/http.dart' as http;
+
+import '../constants.dart';
 
 final bSheet = bottomSheet();
 
@@ -29,11 +34,12 @@ class SpecificReport extends StatefulWidget {
 
 class _SpecificReportState extends State<SpecificReport>
     with SingleTickerProviderStateMixin {
+  String _text = "";
   bool isOpened = false;
   AnimationController _animationController;
 
   static const headerAniInterval =
-      const Interval(.1, .3, curve: Curves.easeOut);
+  const Interval(.1, .3, curve: Curves.easeOut);
   Animation<double> _headerScaleAnimation;
   Animation<Color> _buttonColor;
   Animation<double> _animateIcon;
@@ -49,10 +55,10 @@ class _SpecificReportState extends State<SpecificReport>
 //    print(widget.payments[0].toString());
 
     _animationController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 500))
-          ..addListener(() {
-            setState(() {});
-          });
+    AnimationController(vsync: this, duration: Duration(milliseconds: 500))
+      ..addListener(() {
+        setState(() {});
+      });
     _animateIcon =
         Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
     _buttonColor = ColorTween(
@@ -148,7 +154,9 @@ class _SpecificReportState extends State<SpecificReport>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            widget.payments[index]["created_at"].toString().split("T")[0],
+                            widget.payments[index]["created_at"]
+                                .toString()
+                                .split("T")[0],
                             maxLines: 1,
                             style: TextStyle(
                                 color: Colors.black,
@@ -182,10 +190,10 @@ class _SpecificReportState extends State<SpecificReport>
                 FlatButton(
                   onPressed: () {
                     SimpleFoldingCellState foldingCellState =
-                        // ignore: deprecated_member_use
-                        context.ancestorStateOfType(
-                            // ignore: deprecated_member_use
-                            TypeMatcher<SimpleFoldingCellState>());
+                    // ignore: deprecated_member_use
+                    context.ancestorStateOfType(
+                      // ignore: deprecated_member_use
+                        TypeMatcher<SimpleFoldingCellState>());
                     foldingCellState?.toggleFold();
                   },
                   child: Text(
@@ -200,6 +208,7 @@ class _SpecificReportState extends State<SpecificReport>
       },
     );
   }
+
 
   Widget _buildInnerTopWidget(int index) {
     return Container(
@@ -280,20 +289,28 @@ class _SpecificReportState extends State<SpecificReport>
                     mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
                       Text(
-                        "Sold by (ID):",
+                        "Sold by:",
                         maxLines: 1,
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 15,
                             fontWeight: FontWeight.bold),
                       ),
-                      Text(
-                        widget.payments[index]["vendor_id"],
-                        maxLines: 1,
-                        style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 14,
-                            fontWeight: FontWeight.normal),
+                      new FutureBuilder(
+                          future: getEmployeeName(
+                              widget.payments[index]["vendor_id"]),
+                          initialData: "Loading..",
+                          builder: (BuildContext context,
+                              AsyncSnapshot<String> text) {
+                            return new Text(
+                              text.data,
+                              maxLines: 1,
+                              style: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal),
+                            );
+                          }
                       ),
                     ],
                   ),
@@ -303,6 +320,51 @@ class _SpecificReportState extends State<SpecificReport>
           ],
         ));
   }
+
+  Future <String> getEmployeeName(String id) async {
+    String employeeName = "";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token');
+    print('token: ' + token);
+    bool isSuccess = false;
+    Map data = {'id': id};
+    var jsonData;
+    var response = await http.post(Constants.domain + "vendorGetSingleEmployee",
+        body: data,
+        headers: {
+          'Authorization': 'Bearer $token',
+        });
+    print('Status Code = ' + response.statusCode.toString());
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      try {
+        isSuccess = true;
+        jsonData = json.decode(response.body);
+        print('success: ' + response.body);
+        //parse json
+        employeeName = jsonData['data']['lastname'].toString() +
+            ' ' +
+            jsonData['data']['firstname'].toString();
+      } on FormatException catch (exception) {
+        isSuccess = false;
+        print('Exception: ' + exception.toString());
+        print('Error' + response.body);
+      }
+    } else {
+      try {
+        isSuccess = false;
+        jsonData = json.decode(response.body);
+        print('failed: ' + response.body);
+        return id + ' (Seller ID)';
+      } on FormatException catch (exception) {
+        isSuccess = false;
+        print('Exception: ' + exception.toString());
+        print('Error' + response.body);
+      }
+    }
+    return employeeName;
+  }
+
 
   Widget _buildInnerBottomWidget(int index) {
     return Builder(builder: (context) {
@@ -316,10 +378,10 @@ class _SpecificReportState extends State<SpecificReport>
               child: FlatButton(
                 onPressed: () {
                   SimpleFoldingCellState foldingCellState =
-                      // ignore: deprecated_member_use
-                      context.ancestorStateOfType(
-                          // ignore: deprecated_member_use
-                          TypeMatcher<SimpleFoldingCellState>());
+                  // ignore: deprecated_member_use
+                  context.ancestorStateOfType(
+                    // ignore: deprecated_member_use
+                      TypeMatcher<SimpleFoldingCellState>());
                   foldingCellState?.toggleFold();
                 },
                 child: Text(
@@ -355,7 +417,7 @@ class _SpecificReportState extends State<SpecificReport>
           ),
         ],
         title: Text(
-            //widget.title
+          //widget.title
             widget.title),
       ),
       body: SafeArea(
@@ -416,7 +478,10 @@ class _SpecificReportState extends State<SpecificReport>
                           innerTopWidget: _buildInnerTopWidget(index),
                           innerBottomWidget: _buildInnerBottomWidget(index),
                           cellSize:
-                              Size(MediaQuery.of(context).size.width, 125),
+                          Size(MediaQuery
+                              .of(context)
+                              .size
+                              .width, 125),
                           padding: EdgeInsets.all(15),
                           animationDuration: Duration(milliseconds: 300),
                           borderRadius: 10,

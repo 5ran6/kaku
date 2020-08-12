@@ -22,7 +22,7 @@ final bSheet = bottomSheet();
 
 class InvoiceSummary extends StatefulWidget {
   String name;
-  List <items> itemsList = []; // goes inner top
+  List<items> itemsList = []; // goes inner top
   List items_names = []; // goes inner top
   List prices = []; // goes inner top
   String customer_email;
@@ -183,7 +183,8 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
                                 fontWeight: FontWeight.w300),
                           ),
                           Text(
-                            "Quantity: " + widget.itemsList[index].quantity.toString(),
+                            "Quantity: " +
+                                widget.itemsList[index].quantity.toString(),
                             maxLines: 1,
                             style: TextStyle(
                                 color: Colors.black,
@@ -272,7 +273,7 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
                     mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
                       Text(
-                        "Sold by (ID):",
+                        "Sold by:",
                         maxLines: 1,
                         style: TextStyle(
                             color: Colors.black,
@@ -294,6 +295,50 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
             ),
           ],
         ));
+  }
+
+  Future<String> getEmployeeName(String id) async {
+    String employeeName = "";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token');
+    print('token: ' + token);
+    bool isSuccess = false;
+    Map data = {'id': id};
+    var jsonData;
+    var response = await http.post(Constants.domain + "vendorGetSingleEmployee",
+        body: data,
+        headers: {
+          'Authorization': 'Bearer $token',
+        });
+    print('Status Code = ' + response.statusCode.toString());
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      try {
+        isSuccess = true;
+        jsonData = json.decode(response.body);
+        print('success: ' + response.body);
+        //parse json
+        employeeName = jsonData['data']['lastname'].toString() +
+            ' ' +
+            jsonData['data']['firstname'].toString();
+      } on FormatException catch (exception) {
+        isSuccess = false;
+        print('Exception: ' + exception.toString());
+        print('Error' + response.body);
+      }
+    } else {
+      try {
+        isSuccess = false;
+        jsonData = json.decode(response.body);
+        print('failed: ' + response.body);
+        return id + ' (Seller ID)';
+      } on FormatException catch (exception) {
+        isSuccess = false;
+        print('Exception: ' + exception.toString());
+        print('Error' + response.body);
+      }
+    }
+    return employeeName;
   }
 
   Widget _buildInnerBottomWidget(int index) {
@@ -460,23 +505,21 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
             new FlatButton(
               child: new Text("Yes"),
               onPressed: () async {
-                if (flag == 1)  {
+                if (flag == 1) {
                   //pay cash
                   Toast.show("Processing ....", context);
                   createInvoice(widget.itemsList, widget.name,
                       widget.customer_email, widget.phone, 1);
                   //cash
-              //    Toast.show("Transaction Completed", context);
+                  //    Toast.show("Transaction Completed", context);
 //                  Navigator.of(context).pop();
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => DashboardScreen(),
-                  ));
+
                 }
                 if (flag == 2) {
                   //pay later
                   Toast.show("Processing ....", context);
 
-                   createInvoice(widget.itemsList, widget.name,
+                  createInvoice(widget.itemsList, widget.name,
                       widget.customer_email, widget.phone, 2);
                 }
               },
@@ -494,8 +537,8 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
     );
   }
 
-  void createInvoice(List <items> items, String customer_name, String customer_email,
-      String customer_phone, int flag) async {
+  void createInvoice(List<items> items, String customer_name,
+      String customer_email, String customer_phone, int flag) async {
     //createInvoice to get invoice_no and I will pass payment_method based on flag
 
     stockList cart = stockList(items);
@@ -508,18 +551,15 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
     };
     print('Params: ' + data.toString());
 
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.get('token');
 //    Toast.show(list.toString(), context);
 
     var jsonData;
-    var response =
-        await http.post(Constants.domain + "createInvoice", body: data, headers: {
+    var response = await http
+        .post(Constants.domain + "createInvoice", body: data, headers: {
       'Authorization': 'Bearer $token',
     });
-
-
 
     print('Status Code = ' + response.statusCode.toString());
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -570,7 +610,6 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
 
   void makePayment(
       String invoice_no, String payment_method, String note) async {
-
     Map data = {
       'invoice_no': invoice_no,
       'payment_method': payment_method,
@@ -581,7 +620,7 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
 
     var jsonData;
     var response =
-    await http.post(Constants.domain + "makePayment", body: data, headers: {
+        await http.post(Constants.domain + "makePayment", body: data, headers: {
       'Authorization': 'Bearer $token',
     });
 
@@ -593,8 +632,7 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
       Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => DashboardScreen(),
       ));
-
-        } else {
+    } else {
       try {
         jsonData = json.decode(response.body);
         print('failed: ' + response.body);
@@ -620,9 +658,5 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
         Toast.show("Oops! $error", context);
       }
     }
-
-
-
-
   }
 }

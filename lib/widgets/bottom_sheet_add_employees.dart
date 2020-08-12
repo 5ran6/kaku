@@ -16,6 +16,11 @@ class bottomSheetAdd {
     TextEditingController _fname = new TextEditingController();
     TextEditingController _lname = new TextEditingController();
     bool done = false;
+    String role = "";
+    List roles = [
+      {'name': 'Sales Rep', 'value': 'Employee'},
+      {'name': 'Store Admin', 'value': 'Admin'}
+    ];
 
     showModalBottomSheet(
         context: context,
@@ -87,16 +92,38 @@ class bottomSheetAdd {
                           textInputAction: TextInputAction.next,
                           autofocus: true,
                           style: TextStyle(color: Colors.black),
-                          onSubmitted: (value) {
-                            post(context, _code.text.trim(), _name.text,
-                                _fname.text, _lname.text);
-                          },
+//                          onSubmitted: (value) {
+//                            post(context, _code.text.trim(), _name.text,
+//                                _fname.text, _lname.text);
+//                          },
                           decoration: InputDecoration(
                               labelText: "Employee's Last name",
                               labelStyle: TextStyle(color: Colors.black54),
                               border: OutlineInputBorder()),
                         ),
                       ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: DropdownButtonFormField(
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.category),
+                        labelText: 'Select a Role',
+                        filled: true,
+                        fillColor: Colors.white,
+                        errorStyle: TextStyle(color: Colors.yellow),
+                      ),
+                      value: roles[0]['value'],
+                      items: roles.map((map) {
+                        return DropdownMenuItem(
+                          child: Text(map['name']),
+                          value: map['value'],
+                        );
+                      }).toList(),
+                      onChanged: (dynamic value) {
+                        role = value;
+                      },
                     ),
                   ),
                   Align(
@@ -107,7 +134,7 @@ class bottomSheetAdd {
                         // ScalingText('Loading...'),
                         FlatButton(
                           onPressed: () => post(context, _code.text.trim(),
-                              _name.text, _fname.text, _lname.text),
+                              _name.text, _fname.text, _lname.text, role),
                           child: Text(
                             "ADD",
                           ),
@@ -127,7 +154,7 @@ class bottomSheetAdd {
   }
 
   dynamic post(BuildContext context, String email, String phone, String fname,
-      String lname) async {
+      String lname, String role) async {
     var error = '';
 
     bool checked = false;
@@ -180,7 +207,7 @@ class bottomSheetAdd {
       //Return String
       String token = prefs.getString('token');
       //call api here
-      addEmployee(fname, lname, email, phone, token, context);
+      addEmployee(fname, lname, email, phone, token, role, context);
     } else {
       Toast.show("Enter a valid credentials", context,
           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
@@ -188,13 +215,14 @@ class bottomSheetAdd {
   }
 
   addEmployee(String firstname, String lastname, String email, String phone,
-      String token, BuildContext context) async {
+      String token, String role, BuildContext context) async {
     bool done = false, checked = false;
     Map data = {
       'email': email.trim(),
       'firstname': firstname.trim(),
       'lastname': lastname.trim(),
-      'phone': phone.trim()
+      'phone': phone.trim(),
+      'role': role.trim(),
     };
 
     var jsonData, error;

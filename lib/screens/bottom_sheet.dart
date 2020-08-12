@@ -22,7 +22,7 @@ class bottomSheet {
             child: Container(
               child: new Wrap(
                 children: <Widget>[
-                   Padding(
+                  Padding(
                     padding: EdgeInsets.all(5),
                     child: TextFormField(
                       controller: _customersName,
@@ -39,7 +39,7 @@ class bottomSheet {
                           border: OutlineInputBorder()),
                     ),
                   ),
-                   Padding(
+                  Padding(
                     padding: EdgeInsets.all(5),
                     child: TextFormField(
                       controller: _customersEmail,
@@ -49,7 +49,7 @@ class bottomSheet {
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.emailAddress,
                       autofocus: true,
-                      focusNode:focusNode,
+                      focusNode: focusNode,
                       style: TextStyle(color: Colors.black),
                       decoration: InputDecoration(
                           labelText: 'Email (Optional)',
@@ -67,7 +67,7 @@ class bottomSheet {
                       textInputAction: TextInputAction.done,
                       keyboardType: TextInputType.phone,
                       autofocus: true,
-                      focusNode:focusNodePhone,
+                      focusNode: focusNodePhone,
                       style: TextStyle(color: Colors.black),
                       decoration: InputDecoration(
                           labelText: 'Phone (Optional)',
@@ -79,13 +79,17 @@ class bottomSheet {
                     alignment: Alignment.bottomRight,
                     child: new FlatButton(
                       onPressed: () {
-                        String email;
-                        _customersEmail.text == null ? email= " ": email = _customersEmail.text;
-                        String phone;
-                        _customersPhone.text == null ? phone = " ": phone = _customersPhone.text;
+                        String email = '';
+                        _customersEmail.text == null
+                            ? email = " "
+                            : email = _customersEmail.text;
+                        String phone = '';
+                        _customersPhone.text == null
+                            ? phone = " "
+                            : phone = _customersPhone.text;
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) =>
-                                SalesQRCode(_customersName.text, email, phone)));
+                            builder: (context) => SalesQRCode(
+                                _customersName.text, email, phone)));
                       },
                       child: Text(
                         "Proceed",
