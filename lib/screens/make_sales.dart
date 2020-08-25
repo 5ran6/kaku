@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kaku/models/stock_list.dart';
 import 'package:kaku/models/stocks.dart';
+import 'package:kaku/widgets/make_sale.dart';
+import 'package:kaku/widgets/manual_sale.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:qrcode/qrcode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -56,6 +58,8 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => callSnackbar(context));
 
     _captureController.onCapture((data) {
       print('onCapture----$data');
@@ -176,35 +180,6 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
     }
   }
 
-//  void _showDialog(String barcode, String name, String quantity) {
-//    // flutter defined function
-//    showDialog(
-//      context: context,
-//      builder: (BuildContext context) {
-//        // return object of type Dialog
-//        return AlertDialog(
-//          title: new Text("Out of $quantity in Stock"),
-//          content: new Text("Alert Dialog body"),
-//          actions: <Widget>[
-//            // usually buttons at the bottom of the dialog
-//            new FlatButton(
-//              child: new Text("Close"),
-//              onPressed: () {
-//                Toast.show("Cancelled!", context);
-//                Navigator.of(context).pop();
-//              },
-//            ),
-//            new FlatButton(
-//              child: new Text("Add"),
-//              onPressed: () {
-//            //    addInvoice(barcode, quantity, name);
-//              },
-//            ),
-//          ],
-//        );
-//      },
-//    );
-//  }
 
   void _showDialog1(
       String barcode, String name, String quantity, String price) {
@@ -370,5 +345,27 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
         ),
       ],
     );
+  }
+
+  callSnackbar(BuildContext context) {
+    Scaffold.of(context).showSnackBar(SnackBar(
+      duration: const Duration(seconds: 7),
+      content: Text(
+        "Select Products Manually instead?",
+        style: TextStyle(color: Colors.green),
+      ),
+      action: SnackBarAction(
+        textColor: Colors.white,
+        label: 'Yes',
+        onPressed: () {
+          //goto manual activity
+          //pass name email and phone
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => Manual_Sale(widget.customer_name,
+                widget.customer_email, widget.customer_phone),
+          ));
+        },
+      ),
+    ));
   }
 }

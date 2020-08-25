@@ -219,8 +219,10 @@ class _DashboardScreenState extends State<DashboardScreen>
   AppBar _buildAppBar(ThemeData theme) {
     final menuBtn = IconButton(
       color: theme.primaryColorLight,
-      icon: const Icon(FontAwesomeIcons.user),
-      onPressed: () {},
+      icon: const Icon(Icons.chat),
+      onPressed: () {
+        //goto chat
+      },
     );
     final signOutBtn = IconButton(
       icon: const Icon(FontAwesomeIcons.signOutAlt),

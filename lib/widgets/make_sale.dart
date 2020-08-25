@@ -7,6 +7,12 @@ import 'package:kaku/widgets/category_filters_widget.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 class Make_Sale extends StatefulWidget {
+String name;
+String phone;
+String email;
+
+Make_Sale(this.name, this.email, this.phone);
+
   final Store<AppState> store = Store<AppState>(
       appReducer,
       middleware: [thunkMiddleware],
