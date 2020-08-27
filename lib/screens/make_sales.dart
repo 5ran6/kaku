@@ -58,12 +58,9 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) => callSnackbar(context));
-
     _captureController.onCapture((data) {
       print('onCapture----$data');
-
       setState(() {
         _captureText = data;
         captured = true;

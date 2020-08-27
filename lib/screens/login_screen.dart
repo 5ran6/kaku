@@ -8,6 +8,7 @@ import 'package:kaku/screens/dashboard.dart';
 import 'package:kaku/screens/dashboard_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:toast/toast.dart';
 
 import '../constants.dart';
 import '../custom_route.dart';
@@ -382,5 +383,26 @@ class _LoginScreenState extends State<LoginScreen> {
 //        initialData: [],
 //          value: DatabaseService().user, child: new DashboardScreen(user: user));
     }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+//check if sharedPref has token
+    getToken();
+  }
+
+  void getToken() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    try {
+      String token = await sharedPreferences.get("token");
+      //Toast.show("token: " + token, context);
+      if (token.isNotEmpty) {
+        Navigator.of(context).pushReplacement(FadePageRoute(
+          builder: (context) => DashboardScreen(),
+        ));
+      }
+    } catch (e) {}
   }
 }

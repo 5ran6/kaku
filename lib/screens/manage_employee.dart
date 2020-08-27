@@ -144,8 +144,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
             await SharedPreferences.getInstance();
         String token = await sharedPreferences.get("token");
 
-        var response = await http.post(
-            Constants.domain + "updateEmployeeRole",
+        var response = await http.post(Constants.domain + "updateEmployeeRole",
             body: data,
             headers: {
               'Authorization': 'Bearer $token',
@@ -160,14 +159,13 @@ class _ManageEmployeeState extends State<ManageEmployee> {
       child: Text("Make Admin"),
       onPressed: () async {
         //send just picked to server
-        Map data = {'id': id,'role': "Admin"};
+        Map data = {'id': id, 'role': "Admin"};
         Toast.show("Processing..", context);
         SharedPreferences sharedPreferences =
             await SharedPreferences.getInstance();
         String token = await sharedPreferences.get("token");
 
-        var response = await http.post(
-            Constants.domain + "updateEmployeeRole",
+        var response = await http.post(Constants.domain + "updateEmployeeRole",
             body: data,
             headers: {
               'Authorization': 'Bearer $token',
@@ -175,7 +173,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
         print('Response = ' + response.body.toString());
         Navigator.pop(context);
         setState(() {});
-     },
+      },
     ); // set up the buttons
 
     // set up the buttons

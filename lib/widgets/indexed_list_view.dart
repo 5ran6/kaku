@@ -2,18 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:kaku/widgets/utils.dart';
 
 class IndexedListView extends StatefulWidget {
-
   final List items;
   final IndexedWidgetBuilder itemBuilder;
   final double itemHeight;
 
   IndexedListView({
-    @required
-    this.items,
-    @required
-    this.itemHeight,
-    @required
-    this.itemBuilder,
+    @required this.items,
+    @required this.itemHeight,
+    @required this.itemBuilder,
   });
 
   @override
@@ -21,7 +17,6 @@ class IndexedListView extends StatefulWidget {
 }
 
 class _IndexedListViewState extends State<IndexedListView> {
-
   ScrollController _scrollController;
 
   final GlobalKey alphabetContainerKey = GlobalKey();
@@ -45,17 +40,15 @@ class _IndexedListViewState extends State<IndexedListView> {
       child: Text(
         alphabet,
         textAlign: TextAlign.end,
-        style: TextStyle(
-            fontSize: 12.0,
-            fontWeight: FontWeight.w300
-        ),
+        style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.w300),
       ),
     );
   }
 
   // function to get current clicked alphabet by the user
   int _getAlphabetIndexFromDy(double dy, List<String> alphabets) {
-    final alphabetContainer = alphabetContainerKey.currentContext.findRenderObject() as RenderBox;
+    final alphabetContainer =
+        alphabetContainerKey.currentContext.findRenderObject() as RenderBox;
     final alphabetContainerHeight = alphabetContainer.size.height;
 
     final oneItemHeight = alphabetContainerHeight / alphabets.length;
@@ -67,7 +60,7 @@ class _IndexedListViewState extends State<IndexedListView> {
   // function to calculate alphabet dy index positions (e.g. {'A':0, 'B':8, ...})
   Map<String, int> _getAlphabetDyPositions(List items) {
     Map<String, int> alphabetDyPositions = {};
-    for( var i = 0 ; i < items.length; i++ ) {
+    for (var i = 0; i < items.length; i++) {
       final firstChar = items[i].toString()[0];
 
       if (!alphabetDyPositions.containsKey(firstChar)) {
@@ -96,7 +89,8 @@ class _IndexedListViewState extends State<IndexedListView> {
   }
 
   // scroll to proper items with alphabets when drag started
-  void _onVerticalDragStart(DragStartDetails details, List<String> alphabets, Map<String, int> alphabetDyPositions) {
+  void _onVerticalDragStart(DragStartDetails details, List<String> alphabets,
+      Map<String, int> alphabetDyPositions) {
     final index = _getAlphabetIndexFromDy(details.localPosition.dy, alphabets);
 
     final alphabet = alphabets[index];
@@ -116,14 +110,11 @@ class _IndexedListViewState extends State<IndexedListView> {
 
   void _onVerticalDragEnd(DragEndDetails details) {
     // clear the current selected char when drag ends.
-    Future.delayed(
-        Duration(milliseconds: 500),
-            () {
-          setState(() {
-            currentChar = "";
-          });
-        }
-    );
+    Future.delayed(Duration(milliseconds: 500), () {
+      setState(() {
+        currentChar = "";
+      });
+    });
   }
 
   // main items list view
@@ -140,8 +131,7 @@ class _IndexedListViewState extends State<IndexedListView> {
                 itemCount: widget.items.length,
                 // manually set item height for scrolling calculation
                 itemExtent: widget.itemHeight,
-                itemBuilder: widget.itemBuilder
-            ),
+                itemBuilder: widget.itemBuilder),
           ),
           _alphabeticalIndex(context, widget.items)
         ],
@@ -151,31 +141,31 @@ class _IndexedListViewState extends State<IndexedListView> {
 
   // side alphabetical index to select
   Widget _alphabeticalIndex(BuildContext context, List items) {
-    List<String> alphabets = getAlphabetsFromStringList(items.map((item) => item.toString()).toList());
+    List<String> alphabets = getAlphabetsFromStringList(
+        items.map((item) => item.toString()).toList());
 
     Map<String, int> alphabetDyPositions = _getAlphabetDyPositions(items);
 
     return LayoutBuilder(
       builder: (context, constraint) {
-        if (constraint.maxHeight < 350.0) return Container(); // alphabet list does not fit, might as well hide it
+        if (constraint.maxHeight < 350.0)
+          return Container(); // alphabet list does not fit, might as well hide it
         return Container(
           width: 34.0,
           key: alphabetContainerKey,
           child: GestureDetector(
-            onVerticalDragUpdate: (DragUpdateDetails dragUpdateDetails)
-            => _onVerticalDragUpdate(dragUpdateDetails, alphabets, alphabetDyPositions),
-            onVerticalDragStart: (DragStartDetails dragStartDetails)
-            => _onVerticalDragStart(dragStartDetails, alphabets, alphabetDyPositions),
+            onVerticalDragUpdate: (DragUpdateDetails dragUpdateDetails) =>
+                _onVerticalDragUpdate(
+                    dragUpdateDetails, alphabets, alphabetDyPositions),
+            onVerticalDragStart: (DragStartDetails dragStartDetails) =>
+                _onVerticalDragStart(
+                    dragStartDetails, alphabets, alphabetDyPositions),
             onVerticalDragEnd: _onVerticalDragEnd,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.end,
-              children: []..addAll(
-                  List.generate(
-                      alphabets.length,
-                          (index) => _getAlphabetItem(alphabets[index])
-                  )
-              ),
+              children: []..addAll(List.generate(alphabets.length,
+                  (index) => _getAlphabetItem(alphabets[index]))),
             ),
           ),
         );
@@ -188,29 +178,22 @@ class _IndexedListViewState extends State<IndexedListView> {
     return currentChar.isEmpty
         ? Container()
         : Align(
-      alignment: Alignment.center,
-      child: Container(
-        color: Colors.black.withAlpha(80),
-        padding: EdgeInsets.all(16.0),
-        child: Text(
-          currentChar,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 36.0
-          ),
-        ),
-      ),
-    );
+            alignment: Alignment.center,
+            child: Container(
+              color: Colors.black.withAlpha(80),
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                currentChar,
+                style: TextStyle(color: Colors.white, fontSize: 36.0),
+              ),
+            ),
+          );
   }
 
   @override
   Widget build(BuildContext context) {
     return Stack(
-      children: <Widget>[
-        _itemsList(context),
-        _currentCharIndex(context)
-      ],
+      children: <Widget>[_itemsList(context), _currentCharIndex(context)],
     );
   }
-
 }

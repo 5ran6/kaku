@@ -391,8 +391,12 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
             icon: new Icon(Icons.content_copy),
             highlightColor: Colors.white,
             onPressed: () {
-              Toast.show("Phone number copied to clipboard", context);
-              Clipboard.setData(ClipboardData(text: widget.phone));
+              if (widget.phone.isNotEmpty) {
+                Toast.show("Phone number copied to clipboard", context);
+                Clipboard.setData(ClipboardData(text: widget.phone));
+              } else {
+                Toast.show("No Phone number provided", context);
+              }
             },
           ),
         ],
@@ -516,11 +520,15 @@ class _InvoiceSummaryState extends State<InvoiceSummary>
 
                 }
                 if (flag == 2) {
-                  //pay later
-                  Toast.show("Processing ....", context);
+                  if (widget.customer_email.isNotEmpty) {
+                    //pay later
+                    Toast.show("Processing ....", context);
 
-                  createInvoice(widget.itemsList, widget.name,
-                      widget.customer_email, widget.phone, 2);
+                    createInvoice(widget.itemsList, widget.name,
+                        widget.customer_email, widget.phone, 2);
+                  } else {
+                    Toast.show("Provide customer email", context);
+                  }
                 }
               },
             ),

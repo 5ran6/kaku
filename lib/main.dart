@@ -29,7 +29,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     SharedPreferences.getInstance().then((prefs){
       var isShowed =prefs.getBool("isIntroShowed");
-      if(isShowed!=null && isShowed)
+      if(isShowed==null && isShowed)
       {
         //navigate to main page
      isFirst = false;

@@ -52,6 +52,10 @@ class _DashboardScreenState extends State<DashboardScreen>
 
   Future<bool> _goToLogi(BuildContext context) async {
     try {
+     //invalidate sharedPref
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.clear();
+
       sign = true;
       return Navigator.of(context)
           .pushReplacementNamed(LoginScreen.routeName)
@@ -323,7 +327,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                 ),
               ],
             ),
-            Text('Item(s) Sold Today',
+            Text('Sales made Today',
                 style: TextStyle(color: Colors.green, fontSize: 15)),
           ],
         ),

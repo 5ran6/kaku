@@ -30,7 +30,7 @@ class _Manual_SaleState extends State<Manual_Sale> {
     return MaterialApp(
       title: 'Make Sale',
       theme: ThemeData(
-        primarySwatch: Colors.orange,
+        primarySwatch: Colors.deepOrange,
       ),
       home: Manual_Sales(
         title: 'Select an Item',
@@ -59,37 +59,13 @@ class Manual_Sales extends StatefulWidget {
 class _Manual_SalesState extends State<Manual_Sales> {
   final itemHeight = 50.0;
 
-  bool isLoaded = true,captured = false;
+  bool isLoaded = false, captured = false;
   List<items> itemsList = [];
   List items_names = [];
   List prices = [];
   double _currentQuantity = 1.0;
 
-  final items_list = [
-    "Brazil",
-    "Brazil",
-    "Argentina",
-    "Armenia",
-    "Australia",
-    "Austria",
-    "Indonesia",
-    "Afghanistan",
-    "Albania",
-    "Algeria",
-    "Andorra",
-    "Angola",
-    "Netherlands",
-    "Nigeria",
-    "Poland",
-    "Ghana",
-    "Britian",
-    "Kogi",
-    "Congo",
-    "Kenya",
-    "Russia",
-    "Ukrain",
-    "USA",
-  ];
+  List items_list = [];
 
   Widget itemWidget(BuildContext context, int index) {
     return Text(items_list[index]);
@@ -107,7 +83,7 @@ class _Manual_SalesState extends State<Manual_Sales> {
   void initState() {
     // TODO: implement initState
     super.initState();
-//getProducts in stock
+    //getProducts in stock
     getProducts();
   }
 
@@ -116,10 +92,9 @@ class _Manual_SalesState extends State<Manual_Sales> {
     String token = prefs.getString('token');
     print('token: ' + token);
     bool isSuccess = false;
-    List stock = [];
+    List products = [];
     var jsonData;
-    var response =
-    await http.get(Constants.domain + "getProducts", headers: {
+    var response = await http.get(Constants.domain + "getProducts", headers: {
       'Authorization': 'Bearer $token',
     });
     print('Status Code = ' + response.statusCode.toString());
@@ -128,11 +103,14 @@ class _Manual_SalesState extends State<Manual_Sales> {
     if (response.statusCode == 200 || response.statusCode == 201) {
       try {
         isSuccess = true;
-        final Map parsed = json.decode(response.body)['data']['product_stock'];
+         final Map<String, dynamic> parsed = json.decode(response.body)['data']['products'];
         // print('created_at: ' + parsed['created_at']);
+        items_list = parsed as List;
 
+        setState(() {
+          isLoaded = true;
+        });
         // populate on the list
-
 
       } on FormatException catch (exception) {
         isSuccess = false;
@@ -177,8 +155,6 @@ class _Manual_SalesState extends State<Manual_Sales> {
         });
       }
     }
-
-
   }
 
   @override
@@ -189,7 +165,7 @@ class _Manual_SalesState extends State<Manual_Sales> {
         ),
         body: isLoaded
             ? Scaffold(
-              body: Column(
+                body: Column(
                   children: <Widget>[
                     Expanded(
                       child: Padding(
@@ -203,19 +179,17 @@ class _Manual_SalesState extends State<Manual_Sales> {
                     )
                   ],
                 ),
-          floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.done),
-            backgroundColor: Colors.blue,
-            onPressed: () => itemsList.length > 0
-                ? createInvoice(itemsList, items_names, prices)
-                : Toast.show(
-                "You have not added any item to the cart", context),
-          ),
-            )
+                floatingActionButton: FloatingActionButton(
+                  child: Icon(Icons.done),
+                  backgroundColor: Colors.blue,
+                  onPressed: () => itemsList.length > 0
+                      ? createInvoice(itemsList, items_names, prices)
+                      : Toast.show(
+                          "You have not added any item to the cart", context),
+                ),
+              )
             : Scaffold(body: Center(child: CircularProgressIndicator())));
-
   }
-
 
   void getStock(String barcode) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -226,7 +200,7 @@ class _Manual_SalesState extends State<Manual_Sales> {
     List stock = [];
     var jsonData;
     var response =
-    await http.post(Constants.domain + "scanBarcode", body: data, headers: {
+        await http.post(Constants.domain + "scanBarcode", body: data, headers: {
       'Authorization': 'Bearer $token',
     });
     print('Status Code = ' + response.statusCode.toString());
@@ -235,8 +209,9 @@ class _Manual_SalesState extends State<Manual_Sales> {
     if (response.statusCode == 200 || response.statusCode == 201) {
       try {
         isSuccess = true;
-        final Map parsed = json.decode(response.body)['data']['product_stock'];
-//        print('created_at: ' + parsed['created_at']);
+        final Map<String, dynamic> parsed =
+            json.decode(response.body)['data']['product_stock'];
+        // print('created_at: ' + parsed['created_at']);
 
         // dialogue
         if (int.parse(parsed['current_quantity']) > 0) {
@@ -300,7 +275,6 @@ class _Manual_SalesState extends State<Manual_Sales> {
     }
   }
 
-
   void _showDialog1(
       String barcode, String name, String quantity, String price) {
     try {
@@ -351,14 +325,12 @@ class _Manual_SalesState extends State<Manual_Sales> {
     });
   }
 
-
   void createInvoice(List<items> itemsList, List names, List prices) async {
     //call invoice summary UI.
 
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => InvoiceSummary(widget.name, itemsList,
-          items_names, prices, widget.email, widget.phone),
+      builder: (context) => InvoiceSummary(widget.name, itemsList, items_names,
+          prices, widget.email, widget.phone),
     ));
   }
-
 }
