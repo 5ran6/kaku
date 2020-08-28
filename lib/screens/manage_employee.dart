@@ -40,7 +40,6 @@ class _ManageEmployeeState extends State<ManageEmployee> {
       try {
         print('success: ' + response.body);
         Map<String, dynamic> products = json.decode(response.body);
-
         widget.list = products['data']['employees'];
         return widget.list;
       } on FormatException catch (exception) {

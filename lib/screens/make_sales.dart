@@ -177,7 +177,6 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
     }
   }
 
-
   void _showDialog1(
       String barcode, String name, String quantity, String price) {
     try {
@@ -216,15 +215,16 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
     print('Names: ' + items_names.toString());
     print('Prices: ' + prices.toString());
 
+    Toast.show("Added to invoice", context, textColor: Colors.white, duration: 5);
     //setState
     setState(() {
       captured = false;
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text(
-          "Added to invoice!",
-          style: TextStyle(color: Colors.green),
-        ),
-      ));
+//      Scaffold.of(context).showSnackBar(SnackBar(
+//        content: Text(
+//          "Added to invoice!",
+//          style: TextStyle(color: Colors.green),
+//        ),
+//      ));
     });
   }
 
@@ -349,10 +349,10 @@ class _QRScanState extends State<QRScan> with TickerProviderStateMixin {
       duration: const Duration(seconds: 7),
       content: Text(
         "Select Products Manually instead?",
-        style: TextStyle(color: Colors.green),
+        style: TextStyle(color: Colors.white),
       ),
       action: SnackBarAction(
-        textColor: Colors.white,
+        textColor: Colors.greenAccent,
         label: 'Yes',
         onPressed: () {
           //goto manual activity

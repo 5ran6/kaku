@@ -1,9 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:kaku/constants.dart';
-import 'package:kaku/models/stock_list.dart';
 import 'package:kaku/models/stock_list.dart';
 import 'package:kaku/screens/invoice_summary.dart';
 import 'package:numberpicker/numberpicker.dart';
@@ -11,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 import 'package:http/http.dart' as http;
 
-import 'indexed_list_view.dart';
 
 class Manual_Sale extends StatefulWidget {
   String name;
@@ -59,16 +56,16 @@ class Manual_Sales extends StatefulWidget {
 class _Manual_SalesState extends State<Manual_Sales> {
   final itemHeight = 50.0;
 
-  bool isLoaded = false, captured = false;
+  bool isLoaded = false;
   List<items> itemsList = [];
   List items_names = [];
   List prices = [];
   double _currentQuantity = 1.0;
 
-  List items_list = [];
+  List items_list;
 
   Widget itemWidget(BuildContext context, int index) {
-    return Text(items_list[index]);
+    return Text(items_list[index]['name']);
   }
 
   Widget titleWidget(BuildContext context) {
@@ -103,9 +100,16 @@ class _Manual_SalesState extends State<Manual_Sales> {
     if (response.statusCode == 200 || response.statusCode == 201) {
       try {
         isSuccess = true;
-         final Map<String, dynamic> parsed = json.decode(response.body)['data']['products'];
-        // print('created_at: ' + parsed['created_at']);
-        items_list = parsed as List;
+
+        Map<String, dynamic> products = json.decode(response.body);
+        items_list = products['data']['products'];
+
+        //items_list= List<Product>.from(parsed.map((i) => Product.fromJson(i))).toList();
+
+//         items_list = (json.decode(response.body)['data']['products']).map((i) =>
+//            Product.fromJson(i));
+        print(items_list);
+//        Product product = new Product.fromJson(jsonResponse);
 
         setState(() {
           isLoaded = true;
@@ -117,7 +121,7 @@ class _Manual_SalesState extends State<Manual_Sales> {
         print('Exception: ' + exception.toString());
         print('Error' + response.body);
         setState(() {
-          captured = false;
+          isLoaded = true;
           Scaffold.of(context).showSnackBar(SnackBar(
             content: Text(
               "Something went wrong. Try again",
@@ -132,7 +136,7 @@ class _Manual_SalesState extends State<Manual_Sales> {
         jsonData = json.decode(response.body);
         print('failed: ' + response.body);
         setState(() {
-          captured = false;
+          isLoaded = true;
           Scaffold.of(context).showSnackBar(SnackBar(
             content: Text(
               "Something went wrong. Try again",
@@ -145,7 +149,7 @@ class _Manual_SalesState extends State<Manual_Sales> {
         print('Exception: ' + exception.toString());
         print('Error' + response.body);
         setState(() {
-          captured = false;
+          isLoaded = true;
           Scaffold.of(context).showSnackBar(SnackBar(
             content: Text(
               "Something went wrong. Try again",
@@ -165,29 +169,49 @@ class _Manual_SalesState extends State<Manual_Sales> {
         ),
         body: isLoaded
             ? Scaffold(
-                body: Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: IndexedListView(
-                          itemHeight: itemHeight,
-                          items: items_list..sort(),
-                          itemBuilder: itemWidget,
+          body: Column(
+            children: <Widget>[
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListView.builder(
+                    itemCount: items_list.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: EdgeInsets.only(top: 8.0),
+                        child: Card(
+                          margin: EdgeInsets.fromLTRB(2.0, 2, 2, 0),
+                          child: ListTile(
+                            onTap: () {
+                              //actions to select quantity
+                              setState(() {
+                                isLoaded = false;
+                                getStock(
+                                    items_list[index]["id"].toString());
+                              });
+                            },
+                            trailing: Icon(Icons.add_shopping_cart),
+                            title: Text(items_list[index]['name']),
+                            subtitle: Text(items_list[index]
+                            ['product_category']['name']),
+                          ),
                         ),
-                      ),
-                    )
-                  ],
-                ),
-                floatingActionButton: FloatingActionButton(
-                  child: Icon(Icons.done),
-                  backgroundColor: Colors.blue,
-                  onPressed: () => itemsList.length > 0
-                      ? createInvoice(itemsList, items_names, prices)
-                      : Toast.show(
-                          "You have not added any item to the cart", context),
+                      );
+                    },
+                  ),
                 ),
               )
+            ],
+          ),
+          floatingActionButton: FloatingActionButton(
+            child: Icon(Icons.done),
+            backgroundColor: Colors.blue,
+            onPressed: () => itemsList.length > 0
+                ? createInvoice(itemsList, items_names, prices)
+                : Toast.show(
+                "You have not added any item to the cart", context),
+          ),
+        )
             : Scaffold(body: Center(child: CircularProgressIndicator())));
   }
 
@@ -200,7 +224,7 @@ class _Manual_SalesState extends State<Manual_Sales> {
     List stock = [];
     var jsonData;
     var response =
-        await http.post(Constants.domain + "scanBarcode", body: data, headers: {
+    await http.post(Constants.domain + "scanBarcode", body: data, headers: {
       'Authorization': 'Bearer $token',
     });
     print('Status Code = ' + response.statusCode.toString());
@@ -210,7 +234,7 @@ class _Manual_SalesState extends State<Manual_Sales> {
       try {
         isSuccess = true;
         final Map<String, dynamic> parsed =
-            json.decode(response.body)['data']['product_stock'];
+        json.decode(response.body)['data']['product_stock'];
         // print('created_at: ' + parsed['created_at']);
 
         // dialogue
@@ -220,13 +244,16 @@ class _Manual_SalesState extends State<Manual_Sales> {
         } else {
           print(response.body.toString());
           setState(() {
-            captured = false;
-            Scaffold.of(context).showSnackBar(SnackBar(
-              content: Text(
-                "Sorry, this product is out of stock",
-                style: TextStyle(color: Colors.redAccent),
-              ),
-            ));
+            isLoaded = true;
+            Toast.show("Sorry, this product is out of stock", context,
+                textColor: Colors.white, duration: 5);
+
+//            Scaffold.of(context).showSnackBar(SnackBar(
+//              content: Text(
+//                "Sorry, this product is out of stock",
+//                style: TextStyle(color: Colors.redAccent),
+//              ),
+//            ));
           });
 //          Toast.show("Sorry, this product is out of stock", context);
         }
@@ -235,13 +262,15 @@ class _Manual_SalesState extends State<Manual_Sales> {
         print('Exception: ' + exception.toString());
         print('Error' + response.body);
         setState(() {
-          captured = false;
-          Scaffold.of(context).showSnackBar(SnackBar(
-            content: Text(
-              "Something went wrong. Try again",
-              style: TextStyle(color: Colors.redAccent),
-            ),
-          ));
+          isLoaded = true;
+          Toast.show("Something went wrong. Try again", context,
+              textColor: Colors.redAccent);
+//          Scaffold.of(context).showSnackBar(SnackBar(
+//            content: Text(
+//              "Something went wrong. Try again",
+//              style: TextStyle(color: Colors.redAccent),
+//            ),
+//          ));
         });
       }
     } else {
@@ -250,26 +279,31 @@ class _Manual_SalesState extends State<Manual_Sales> {
         jsonData = json.decode(response.body);
         print('failed: ' + response.body);
         setState(() {
-          captured = false;
-          Scaffold.of(context).showSnackBar(SnackBar(
-            content: Text(
-              "Something went wrong. Try again",
-              style: TextStyle(color: Colors.redAccent),
-            ),
-          ));
+          isLoaded = true;
+          Toast.show("Something went wrong. Try again", context,
+              textColor: Colors.redAccent);
+//          Scaffold.of(context).showSnackBar(SnackBar(
+//            content: Text(
+//              "Something went wrong. Try again",
+//              style: TextStyle(color: Colors.redAccent),
+//            ),
+//          ));
         });
       } on FormatException catch (exception) {
         isSuccess = false;
         print('Exception: ' + exception.toString());
         print('Error' + response.body);
         setState(() {
-          captured = false;
-          Scaffold.of(context).showSnackBar(SnackBar(
-            content: Text(
-              "Something went wrong. Try again",
-              style: TextStyle(color: Colors.redAccent),
-            ),
-          ));
+          isLoaded = true;
+          Toast.show("Something went wrong. Try again", context,
+              textColor: Colors.redAccent);
+
+//          Scaffold.of(context).showSnackBar(SnackBar(
+//            content: Text(
+//              "Something went wrong. Try again",
+//              style: TextStyle(color: Colors.redAccent),
+//            ),
+//          ));
         });
       }
     }
@@ -289,7 +323,6 @@ class _Manual_SalesState extends State<Manual_Sales> {
             );
           }).then((int value) {
         if (value != null) {
-          Navigator.pop(context);
           addInvoice(barcode, quantity, name, price);
 
 //        setState(() => _currentQuantity = value);
@@ -314,14 +347,17 @@ class _Manual_SalesState extends State<Manual_Sales> {
     print('Prices: ' + prices.toString());
 
     //setState
+    Toast.show("Added to invoice", context, textColor: Colors.white, duration: 5);
+//    Navigator.pop(context);
+
     setState(() {
-      captured = false;
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text(
-          "Added to invoice!",
-          style: TextStyle(color: Colors.green),
-        ),
-      ));
+      isLoaded = true;
+////      Scaffold.of(context).showSnackBar(SnackBar(
+////        content: Text(
+////          "Added to invoice!",
+////          style: TextStyle(color: Colors.green),
+////        ),
+////      ));
     });
   }
 
