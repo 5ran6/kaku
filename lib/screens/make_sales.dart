@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kaku/models/stock_list.dart';
-import 'package:kaku/models/stocks.dart';
+import 'package:kaku/models/db_model.dart';
 import 'package:kaku/widgets/make_sale.dart';
 import 'package:kaku/widgets/manual_sale.dart';
 import 'package:numberpicker/numberpicker.dart';

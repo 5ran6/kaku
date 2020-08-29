@@ -227,7 +227,7 @@ class _SpecificReportState extends State<SpecificReport>
                     mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
                       Text(
-                        "Date: ",
+                        "Time: ",
                         maxLines: 1,
                         style: TextStyle(
                             color: Colors.black,
@@ -235,7 +235,7 @@ class _SpecificReportState extends State<SpecificReport>
                             fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        widget.payments[index]["created_at"].split('T')[0],
+                        widget.payments[index]["created_at"].split('T')[1].toString().split(".")[0],
                         maxLines: 1,
                         style: TextStyle(
                             color: Colors.black87,
