@@ -49,6 +49,8 @@ dependencies:
   redux_thunk: ^0.3.0
   flutter_redux_navigation:
   date_range_picker: ^1.0.6
+  sqflite: any
+  path_provider: any
 
 dev_dependencies:
   flutter_test:

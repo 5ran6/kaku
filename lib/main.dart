@@ -40,6 +40,10 @@ class _MyAppState extends State<MyApp> {
       }
     });
 
+    //create DB  KAKU if not existent
+        
+
+
     super.initState();
   }
 

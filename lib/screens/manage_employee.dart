@@ -100,7 +100,7 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                           //actions with dialogs
                           showAlertDialog(
                               context,
-                              widget.list[index]['id'].toString(),
+                              widget.list[index]['user_id'].toString(),
                               widget.list[index]['phone'],
                               widget.list[index]['lastname'] +
                                   " " +
@@ -113,7 +113,10 @@ class _ManageEmployeeState extends State<ManageEmployee> {
                               ? Icons.done_outline
                               : Icons.warning,
                         ),
-                        leading: Icon(Icons.perm_identity),
+                        leading:
+                            widget.list[index]['role'].toString() == 'Employee'
+                                ? Icon(Icons.perm_identity)
+                                : Icon(Icons.person),
                         title: Text(widget.list[index]['lastname'] +
                             " " +
                             widget.list[index]['firstname']),
@@ -149,8 +152,13 @@ class _ManageEmployeeState extends State<ManageEmployee> {
               'Authorization': 'Bearer $token',
             });
         print('Response = ' + response.body.toString());
-        Navigator.pop(context);
-        setState(() {});
+        if (response.statusCode == 200 || response.statusCode == 200) {
+          Toast.show("Role successfully updated", context);
+          Navigator.pop(context);
+          setState(() {});
+        } else {
+          Toast.show("Unsuccessful. Please try again!", context);
+        }
       },
     ); // set up the buttons
 
@@ -169,9 +177,15 @@ class _ManageEmployeeState extends State<ManageEmployee> {
             headers: {
               'Authorization': 'Bearer $token',
             });
+
         print('Response = ' + response.body.toString());
-        Navigator.pop(context);
-        setState(() {});
+        if (response.statusCode == 200 || response.statusCode == 200) {
+          Toast.show("Role successfully updated", context);
+          Navigator.pop(context);
+          setState(() {});
+        } else {
+          Toast.show("Unsuccessful. Please try again!", context);
+        }
       },
     ); // set up the buttons
 

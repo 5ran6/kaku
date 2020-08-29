@@ -9,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 import 'package:http/http.dart' as http;
 
-
 class Manual_Sale extends StatefulWidget {
   String name;
   String phone;
@@ -55,12 +54,12 @@ class Manual_Sales extends StatefulWidget {
 
 class _Manual_SalesState extends State<Manual_Sales> {
   final itemHeight = 50.0;
-
   bool isLoaded = false;
   List<items> itemsList = [];
   List items_names = [];
   List prices = [];
-  double _currentQuantity = 1.0;
+
+//  double _currentQuantity = 1.0;
 
   List items_list;
 
@@ -169,49 +168,49 @@ class _Manual_SalesState extends State<Manual_Sales> {
         ),
         body: isLoaded
             ? Scaffold(
-          body: Column(
-            children: <Widget>[
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListView.builder(
-                    itemCount: items_list.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.only(top: 8.0),
-                        child: Card(
-                          margin: EdgeInsets.fromLTRB(2.0, 2, 2, 0),
-                          child: ListTile(
-                            onTap: () {
-                              //actions to select quantity
-                              setState(() {
-                                isLoaded = false;
-                                getStock(
-                                    items_list[index]["id"].toString());
-                              });
-                            },
-                            trailing: Icon(Icons.add_shopping_cart),
-                            title: Text(items_list[index]['name']),
-                            subtitle: Text(items_list[index]
-                            ['product_category']['name']),
-                          ),
+                body: Column(
+                  children: <Widget>[
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: ListView.builder(
+                          itemCount: items_list.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: EdgeInsets.only(top: 8.0),
+                              child: Card(
+                                margin: EdgeInsets.fromLTRB(2.0, 2, 2, 0),
+                                child: ListTile(
+                                  onTap: () {
+                                    //actions to select quantity
+                                    setState(() {
+                                      isLoaded = false;
+                                      getStock(
+                                          items_list[index]["id"].toString());
+                                    });
+                                  },
+                                  trailing: Icon(Icons.add_shopping_cart),
+                                  title: Text(items_list[index]['name']),
+                                  subtitle: Text(items_list[index]
+                                      ['product_category']['name']),
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    )
+                  ],
+                ),
+                floatingActionButton: FloatingActionButton(
+                  child: Icon(Icons.done),
+                  backgroundColor: Colors.blue,
+                  onPressed: () => itemsList.length > 0
+                      ? createInvoice(itemsList, items_names, prices)
+                      : Toast.show(
+                          "You have not added any item to the cart", context),
                 ),
               )
-            ],
-          ),
-          floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.done),
-            backgroundColor: Colors.blue,
-            onPressed: () => itemsList.length > 0
-                ? createInvoice(itemsList, items_names, prices)
-                : Toast.show(
-                "You have not added any item to the cart", context),
-          ),
-        )
             : Scaffold(body: Center(child: CircularProgressIndicator())));
   }
 
@@ -224,7 +223,7 @@ class _Manual_SalesState extends State<Manual_Sales> {
     List stock = [];
     var jsonData;
     var response =
-    await http.post(Constants.domain + "scanBarcode", body: data, headers: {
+        await http.post(Constants.domain + "scanBarcode", body: data, headers: {
       'Authorization': 'Bearer $token',
     });
     print('Status Code = ' + response.statusCode.toString());
@@ -234,7 +233,7 @@ class _Manual_SalesState extends State<Manual_Sales> {
       try {
         isSuccess = true;
         final Map<String, dynamic> parsed =
-        json.decode(response.body)['data']['product_stock'];
+            json.decode(response.body)['data']['product_stock'];
         // print('created_at: ' + parsed['created_at']);
 
         // dialogue
@@ -335,8 +334,6 @@ class _Manual_SalesState extends State<Manual_Sales> {
 
   void addInvoice(
       String stock_id, String quantity, String name, String price) async {
-    //bottomSheet
-
     //add to list
     itemsList.add(items(stock_id, int.parse(quantity)));
     items_names.add(name);
@@ -347,17 +344,12 @@ class _Manual_SalesState extends State<Manual_Sales> {
     print('Prices: ' + prices.toString());
 
     //setState
-    Toast.show("Added to invoice", context, textColor: Colors.white, duration: 5);
+    Toast.show("Added to invoice", context,
+        textColor: Colors.white, duration: 5);
 //    Navigator.pop(context);
 
     setState(() {
       isLoaded = true;
-////      Scaffold.of(context).showSnackBar(SnackBar(
-////        content: Text(
-////          "Added to invoice!",
-////          style: TextStyle(color: Colors.green),
-////        ),
-////      ));
     });
   }
 
