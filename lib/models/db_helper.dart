@@ -4,8 +4,8 @@ import 'package:kaku/models/db_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
-import '../../models/album.dart';
-import '../../models/albums.dart';
+
+import 'db_model.dart';
 
 class DBHelper {
   static Database _db;
@@ -76,41 +76,51 @@ class DBHelper {
   }
 
   // Method to insert the Stock record to the Database
-  Future<Stocks> save(Stocks album) async {
+  Future<Stock> save(Stock stock) async {
     var dbClient = await db;
     // this will insert the Album object to the DB after converting it to a json
-    album.id = await dbClient.insert(TABLE, album.toJson());
-    return album;
+    stock.id = (await dbClient.insert(STOCKS_TABLE, stock.toJson())) as String;
+    return stock;
   }
 
   // Method to return all Stocks from the DB
-  Future<Stocks> getAlbums() async {
+  Future<Stock> getStocks() async {
     var dbClient = await db;
     // specify the column names you want in the result set
-    List<Map> maps =
-        await dbClient.query(TABLE, columns: [ID, TITLE, URL, THUMBNAIL_URL]);
-    Albums allAlbums = Albums();
-    List<Album> albums = [];
+    List<Map> maps = await dbClient.query(STOCKS_TABLE, columns: [
+      STOCKS_ID,
+      PRODUCT_ID,
+      STOCKS_VENDOR_ID,
+      SELLING_PRICE,
+      DISCOUNT,
+      STOCKS_CREATED_AT,
+      CURRENT_QUANTITY,
+      INITIAL_QUANTITY
+    ]);
+    Stock allStock = Stock();
+    List<Stock> stocks = [];
     if (maps.length > 0) {
       for (int i = 0; i < maps.length; i++) {
-        albums.add(Album.fromJson(maps[i]));
+        stocks.add(Stock.fromJson(maps[i]));
       }
     }
-    allAlbums.albums = albums;
-    return allAlbums;
+    allStock.stock = stocks;
+
+    return allStock;
   }
 
-//  // Method to delete a Stock from the Database ....NOt needeD
-//  Future<int> delete(int id) async {
-//    var dbClient = await db;
-//    return await dbClient.delete(TABLE, where: '$ID = ?', whereArgs: [id]);
-//  }
-
-  // Method to Update a Stock in the Database
-  Future<int> update(Stocks album) async {
+  // Method to delete a Stock from the Database ....NOt needeD
+  Future<int> delete(int id) async {
     var dbClient = await db;
     return await dbClient
-        .update(TABLE, album.toJson(), where: '$ID = ?', whereArgs: [album.id]);
+        .delete(STOCKS_TABLE, where: '$STOCKS_ID = ?', whereArgs: [id]);
+  }
+
+  // Method to Update a Stock in the Database
+  Future<int> update(Stock stock) async {
+    var dbClient = await db;
+    return await dbClient.update(STOCKS_TABLE, stock.toJson(),
+        where: '$STOCKS_ID = ?', whereArgs: [stock.id]);
   }
 
   // Method to Truncate the Table DONE
